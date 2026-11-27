@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>船票</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--paper:#fdf7e6;--ink:#3a2a1a;--soft:rgba(58,42,26,.7);--line:rgba(58,42,26,.18);--red:#a8322a;--navy:#2b4660}
+body[data-sky=night]{--bg:#3a2f2a;--paper:#3a3542;--ink:#efe3c8;--soft:rgba(239,227,200,.65);--line:rgba(239,227,200,.16)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button,input{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
+.bar{flex:none;display:flex;align-items:center;height:calc(44px + env(safe-area-inset-top)*.7);padding:calc(env(safe-area-inset-top)*.7) 10px 0;background:var(--navy);color:#fdf3d8;border-bottom:3px solid #b08a4a}
+.bar button{border:0;background:rgba(253,243,216,.14);color:#fdf3d8;height:28px;padding:0 11px;border-radius:14px;font-size:12.5px;cursor:pointer}
+.bar b{flex:1;text-align:center;font-weight:400;font-size:17px}
+.body{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 0 30px;-webkit-overflow-scrolling:touch;background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,235,190,.07) 0 2px,transparent 2px 9px,rgba(90,55,20,.06) 9px 10px,transparent 10px 23px),repeating-linear-gradient(180deg,rgba(80,48,16,.34) 0 1.5px,rgba(255,236,196,.2) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+.tools{display:flex;gap:6px;padding:10px 12px 0;align-items:center}
+.tools input{flex:1;min-width:0;height:32px;border:1.5px solid rgba(58,42,26,.3);border-radius:16px;background:rgba(253,247,230,.55);padding:0 12px;font-size:16px;outline:0;-webkit-user-select:text;user-select:text}
+.tabs2{display:flex;gap:6px;padding:8px 12px 0;overflow-x:auto;scrollbar-width:none}
+.tabs2::-webkit-scrollbar{display:none}
+.tabs2 button,.tools button{flex:none;border:1.5px solid rgba(58,42,26,.3);background:rgba(253,247,230,.5);border-radius:15px;height:30px;padding:0 12px;font-size:13px;cursor:pointer;white-space:nowrap}
+.tabs2 button.on,.tools button.on{background:var(--navy);border-color:var(--navy);color:#fdf3d8}
+/* 票 */
+.list{padding:6px 12px 0}
+.tk{position:relative;aspect-ratio:var(--tar,2.55);margin:12px 0 0;background:url(img/tk_ticket.webp) center/100% 100% no-repeat;filter:drop-shadow(0 5px 6px rgba(50,28,8,.35));cursor:pointer;transition:transform .25s,opacity .3s;transform:rotate(var(--r,0deg))}
+.first .tk{animation:in .5s cubic-bezier(.3,1.3,.5,1) backwards;animation-delay:calc(var(--i)*70ms)}
+@keyframes in{from{transform:translateX(60%) rotate(8deg);opacity:0}}
+.tk:active{transform:scale(.98)}
+.tk .main{position:absolute;left:26.5%;right:23%;top:11%;bottom:10%;display:flex;flex-direction:column;justify-content:center;color:#2f2416;min-width:0}
+.tk .route{font-size:clamp(15px,4.6vw,21px);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk .route i{font-style:normal;color:#2b4660;margin:0 .25em}
+.tk .when{font-size:clamp(10.5px,3vw,12.5px);color:rgba(47,36,22,0.88);margin-top:3px;font-family:-apple-system,"PingFang SC",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tk .line{font-size:clamp(11.5px,3.3vw,14px);margin-top:5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:rgba(47,36,22,0.88)}
+.tk .stub{position:absolute;right:3.2%;width:16.5%;top:26%;bottom:10%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2b4660;font-size:clamp(9.5px,2.7vw,11.5px);text-align:center;line-height:1.5;font-family:-apple-system,"PingFang SC",sans-serif}
+.tk .stub b{font-weight:400;font-size:clamp(15px,4.6vw,20px);font-family:"Letter","LetterAll","Kaiti SC",serif;color:#2f2416;display:block}
+.tk .flag{position:absolute;left:4%;top:-7%;background:var(--red);color:#fff;font-size:12px;padding:2px 8px 3px;border-radius:3px 3px 3px 0;box-shadow:0 2px 3px rgba(0,0,0,.25);animation:wave 2.4s ease-in-out infinite;transform-origin:0 100%}
+@keyframes wave{50%{transform:rotate(-4deg)}}
+.stamp{position:absolute;left:var(--sx,76.3%);top:var(--sy,23%);width:var(--sw,21%);aspect-ratio:1;background:url(img/tk_stamp.webp) center/contain no-repeat;transform:rotate(var(--sr,-14deg));pointer-events:none;mix-blend-mode:multiply;opacity:.9}
+.stamp span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#8f2a22;font-family:"Letter","LetterAll","Kaiti SC",serif;font-size:calc(var(--fs,1) * 15px);line-height:1.15;letter-spacing:.06em}
+.stamp span small{font-size:.5em;letter-spacing:.02em;font-family:-apple-system,sans-serif;margin-top:.15em}
+.tk.gone{filter:drop-shadow(0 4px 5px rgba(50,28,8,.3)) saturate(.75)}
+.tk.gone .stamp{filter:hue-rotate(190deg) saturate(.8)}.tk.gone .stamp span{color:#2b4660}
+.tk.st .stub{display:none}
+.tk .ck{position:absolute;right:3px;top:-5px;width:22px;height:22px;border-radius:50%;border:2px solid #fdf3d8;background:rgba(58,42,26,.35);display:none;z-index:3}
+.picking .tk .ck{display:block}.tk.sel .ck{background:var(--navy);box-shadow:inset 0 0 0 3px #fdf3d8}
+.empty{font-size:15px;color:rgba(58,42,26,0.88);padding:26px 0;text-align:center}
+.bulk{position:absolute;left:0;right:0;bottom:0;display:none;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--navy);z-index:8}
+.picking .bulk{display:flex}
+.bulk button{flex:1;height:38px;border-radius:19px;border:1.5px solid rgba(253,243,216,.4);background:transparent;color:#fdf3d8;font-size:13.5px;cursor:pointer}
+.bulk button.del{background:var(--red);border-color:var(--red)}
+.tip{font-size:12px;margin:14px 16px 0;text-align:center;color:rgba(58,42,26,0.88)}
+body[data-sky=night] .tip,body[data-sky=night] .empty{color:rgba(239,227,200,0.94)}
+/* 一张票翻开看 */
+.det{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .35s cubic-bezier(.3,.9,.3,1)}
+.det.on{transform:none}
+.det .body{padding-bottom:110px}
+.det .tk{margin:16px 12px 0;cursor:default;animation:none}
+.sec{margin:14px 14px 0;background:var(--paper);border-radius:6px;padding:12px 14px;box-shadow:0 3px 8px rgba(50,28,8,.25)}
+.sec h3{margin:0 0 8px;font-weight:400;font-size:13px;color:var(--soft);display:flex;justify-content:space-between}
+.note{font-size:16px;line-height:1.75}
+.stop{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14.5px;position:relative;cursor:pointer}
+.stop::before{content:"";flex:none;width:13px;height:13px;border-radius:50%;border:2px solid var(--navy);margin-top:4px;background:var(--paper);z-index:1;transition:background .2s}
+.stop.done::before{background:var(--navy)}
+.stop:not(:last-child)::after{content:"";position:absolute;left:5.5px;top:20px;bottom:-6px;border-left:2px dashed var(--line)}
+.stop.done span{color:var(--soft)}
+.stop em{font-style:normal;font-size:12px;color:var(--soft);display:block}
+.act{position:absolute;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(60,36,12,.35) 40%);z-index:5}
+.act button{flex:1;height:46px;border-radius:23px;border:0;font-size:16px;cursor:pointer;box-shadow:0 3px 8px rgba(50,28,8,.35)}
+.act .pri{background:var(--red);color:#fff}.act .sec2{background:var(--paper);color:var(--ink);flex:.6}
+/* 盖章 */
+.stamper{position:absolute;left:0;top:0;width:34%;aspect-ratio:.75;background:url(img/tk_stamper.webp) center/contain no-repeat;pointer-events:none;z-index:30;opacity:0;filter:drop-shadow(0 14px 10px rgba(40,22,6,.45))}
+.stamper.go{animation:thud 1.15s cubic-bezier(.5,0,.4,1) forwards}
+@keyframes thud{0%{opacity:0;transform:translate(var(--tx),calc(var(--ty) - 190px)) rotate(-16deg)}18%{opacity:1}46%{transform:translate(var(--tx),var(--ty)) rotate(-4deg) scale(.96)}58%{transform:translate(var(--tx),calc(var(--ty) + 3px)) rotate(-4deg) scale(.93)}100%{opacity:0;transform:translate(calc(var(--tx) + 40px),calc(var(--ty) - 170px)) rotate(10deg)}}
+.stamp.new{animation:ink .35s .5s backwards}
+@keyframes ink{from{opacity:0;transform:rotate(var(--sr)) scale(1.25)}}
+.shake{animation:shk .28s .5s}
+@keyframes shk{30%{transform:translateY(4px)}60%{transform:translateY(-2px)}}
+.toast{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);background:rgba(30,20,10,.85);color:#fdf3d8;font-size:13px;padding:8px 14px;border-radius:16px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:40;white-space:nowrap}
+.toast.on{opacity:1}
+
+/* 顶上不要深蓝横栏：只留小返回钮，名字是一行手写字；卡片用旧纸，不用白底 */
+.bar{background:none!important;border:0!important;color:#3a2a1a!important;height:calc(46px + env(safe-area-inset-top)*.7)!important}
+.bar button{background:rgba(255,250,238,.92)!important;color:#3a2a1a!important;height:30px!important;border-radius:15px!important;box-shadow:0 1px 4px rgba(40,30,10,.3);font-weight:500}
+.bar b{font-size:17px!important;color:#3a2a1a!important;text-shadow:0 1px 0 rgba(255,240,205,.5)}
+:root{--paper:linear-gradient(rgba(250,242,222,.72),rgba(250,242,222,.72)),url(../../img/paper.webp) center/340px #efe0bb!important}
+body[data-sky=night]{--paper:linear-gradient(rgba(58,53,66,.9),rgba(58,53,66,.9)),url(../../img/paper.webp) center/340px #3a3542!important}
+body[data-sky=night] .bar b{color:#efe3c8!important;text-shadow:none}
+</style></head><body>
+<div id="app">
+<div class="bar"><button id="back">‹ 回船上</button><b class="hand">船票</b><button id="pick">整理</button></div>
+<div class="body" id="body">
+  <div class="tools"><input id="find" placeholder="找一张票：地方、日子、他写的话"><button id="demo">他再寄一张（演示）</button></div>
+  <div class="tabs2" id="tabs"></div>
+  <div class="list" id="list"></div>
+  <div class="tip">票都是演示。接上以后，票是他寄来的，你只管盖章。</div>
+</div>
+<div class="bulk"><button id="bgone">标成去过了</button><button class="del" id="brm">退掉</button><button id="bdone">好了</button></div>
+<div class="det" id="det">
+  <div class="bar"><button id="dback">‹ 票夹</button><b class="hand" id="dtitle"></b><button id="drm">退票</button></div>
+  <div class="body" id="dbody"></div>
+  <div class="act" id="act"></div>
+  <div class="stamper" id="stamper"></div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
+try{document.body.dataset.sky=parent.document.body.dataset.sky||''}catch(e){}
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+const uid=()=>Math.random().toString(36).slice(2,9),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const D0=864e5,pad=n=>String(n).padStart(2,'0'),fmt=t=>{const d=new Date(t);return d.getFullYear()+' 年 '+(d.getMonth()+1)+' 月 '+d.getDate()+' 日'},md=t=>{const d=new Date(t);return (d.getMonth()+1)+'.'+pad(d.getDate())};
+const POOL=[['码头','灯塔岬','去看一次日落，他说那边的光像蜂蜜。',['坐早班船过去','沿着防波堤走到头','等太阳掉进海里','回来路上吃点热的']],['家门口','雾岛','起雾的早上去，什么都看不清的那种。',['带上保温杯','在船头站一会儿','听雾号']],['邮局路','北边的小渔村','他想让你尝那家的炸鱼。',['挑一张靠窗的桌子','炸鱼和薯条各一份','在码头喂海鸥（别被抢）']],['钟楼巷','旧书集市','一年只开三天，他记着日子。',['各挑一本送对方','找一本最旧的','在扉页上写今天']],['剧院街','星夜甲板','找个没有灯的晚上，躺着数星星。',['带一条毯子','他讲星座的故事','谁先困谁输']]];
+let T=LS.get('tickets-1',null);
+if(!T){const n=Date.now(),mk=(i,st,dt,sent)=>({id:uid(),from:POOL[i][0],to:POOL[i][1],note:'（演示）'+POOL[i][2],stops:POOL[i][3].map(t=>({t,done:st==='gone'})),date:n+dt*D0,sent:n-sent*D0,st,no:'No.'+pad(i+7)});
+  T=[mk(0,'new',6,0),mk(1,'new',15,1),mk(2,'on',3,5),mk(3,'gone',-12,30),mk(4,'gone',-40,55)];T[3].back='（演示）他挑的那本扉页上已经有人写过字了，1987 年的。';LS.set('tickets-1',T)}
+const save=()=>{LS.set('tickets-1',T);try{parent.ticketBadge&&parent.ticketBadge(T.filter(t=>t.st==='new').length)}catch(e){}};
+let tab='all',picking=false,sel=new Set(),cur=null;
+function toast(s){const t=$('#toast');t.textContent=s;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1700)}
+const STN={new:'新邀请',on:'要去的',gone:'去过的'};
+function left(t){const d=Math.ceil((t.date-Date.now())/D0);return t.st==='gone'?'去过了':d>1?'还有 '+d+' 天':d===1?'明天':d===0?'就是今天':'日子过了'}
+function tk(t,i,big){const r=big?0:((i*37)%5-2)*.5;
+  return `<div class="tk ${t.st==='gone'?'gone':''} ${t.st!=='new'?'st':''} ${sel.has(t.id)?'sel':''}" data-id="${t.id}" style="--r:${r}deg;--i:${i||0}">
+  ${t.st==='new'&&!big?'<span class="flag">新邀请</span>':''}
+  <div class="main hand"><div class="route">${esc(t.from)}<i>→</i>${esc(t.to)}</div><div class="when">${fmt(t.date)} · ${left(t)}</div><div class="line">${esc(t.note)}</div></div>
+  <div class="stub">${t.no}<b>${md(t.date)}</b>${STN[t.st]}</div>
+  ${t.st!=='new'?`<div class="stamp ${t._new?'new':''}" style="--sr:${t.st==='gone'?9:-14}deg;--fs:${big?.9:.76}"><span>${t.st==='gone'?'去过了':'已登船'}<small>${md(t.stAt||t.date)}</small></span></div>`:''}
+  <i class="ck"></i></div>`}
+function paint(){
+  const q=$('#find').value.trim(),cnt=k=>T.filter(t=>t.st===k).length;
+  $('#tabs').innerHTML=[['all','全部 '+T.length],['new','新邀请 '+cnt('new')],['on','要去的 '+cnt('on')],['gone','去过的 '+cnt('gone')]].map(([k,n])=>`<button data-k="${k}" class="${tab===k?'on':''}">${n}</button>`).join('');
+  const ord={new:0,on:1,gone:2},ls=T.filter(t=>(tab==='all'||t.st===tab)&&(!q||(t.from+t.to+t.note+fmt(t.date)+t.stops.map(s=>s.t).join('')).includes(q))).sort((a,b)=>ord[a.st]-ord[b.st]||(a.st==='gone'?b.date-a.date:a.date-b.date));
+  $('#list').innerHTML=ls.length?ls.map((t,i)=>tk(t,i)).join(''):`<div class="empty">${q?'没找到这样的票':'这里还没有票'}</div>`;
+  $('#app').classList.toggle('picking',picking);$('#pick').textContent=picking?'已选 '+sel.size:'整理';T.forEach(t=>delete t._new)}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b){tab=b.dataset.k;paint()}};
+$('#find').oninput=paint;
+$('#pick').onclick=()=>{picking=!picking;sel.clear();paint()};
+$('#bdone').onclick=()=>{picking=false;sel.clear();paint()};
+$('#brm').onclick=()=>{if(!sel.size)return;T=T.filter(t=>!sel.has(t.id));sel.clear();picking=false;save();paint();toast('退掉了')};
+$('#bgone').onclick=()=>{if(!sel.size)return;T.forEach(t=>{if(sel.has(t.id)){t.st='gone';t.stAt=Date.now();t.stops.forEach(s=>s.done=true)}});sel.clear();picking=false;save();paint()};
+$('#list').onclick=e=>{const c=e.target.closest('.tk');if(!c)return;const id=c.dataset.id;if(picking){sel.has(id)?sel.delete(id):sel.add(id);paint();return}open(id)};
+$('#demo').onclick=()=>{const used=new Set(T.map(t=>t.to)),p=POOL.filter(x=>!used.has(x[1]))[0]||POOL[Math.floor(Math.random()*POOL.length)];
+  T.unshift({id:uid(),from:p[0],to:p[1],note:'（演示）'+p[2],stops:p[3].map(t=>({t,done:false})),date:Date.now()+(4+Math.floor(Math.random()*20))*D0,sent:Date.now(),st:'new',no:'No.'+pad(T.length+7)});tab='all';save();paint();toast('他寄来一张新的')};
+
+/* 详情 */
+function open(id){cur=T.find(t=>t.id===id);if(!cur)return;paintDet();$('#det').classList.add('on')}
+function paintDet(){const t=cur;$('#dtitle').textContent=t.to;
+  $('#dbody').innerHTML=tk(t,0,true)+`<div class="sec"><h3><span>他写的</span><span>${fmt(t.sent)}寄来</span></h3><div class="note hand">${esc(t.note)}</div></div>
+  <div class="sec"><h3><span>这一趟打算</span><span>${t.st==='new'?'盖了章再勾':t.stops.filter(s=>s.done).length+' / '+t.stops.length}</span></h3>${t.stops.map((s,i)=>`<div class="stop ${s.done?'done':''}" data-i="${i}"><span class="hand">${esc(s.t)}</span></div>`).join('')}</div>
+  ${t.st==='gone'?`<div class="sec"><h3><span>回来以后</span></h3><div class="note hand">${t.back?esc(t.back):'<span style="color:var(--soft);font-size:14px">还没写。接上以后，这里是他回来写的一句。</span>'}</div></div>`:''}`;
+  $('#act').innerHTML=t.st==='new'?'<button class="sec2" id="later">下次吧</button><button class="pri hand" id="go">盖章，上船</button>':t.st==='on'?'<button class="pri hand" id="fin">这趟去过了</button>':'';
+  const g=$('#go'),f=$('#fin'),l=$('#later');if(g)g.onclick=()=>stampIt('on');if(f)f.onclick=()=>stampIt('gone');if(l)l.onclick=()=>{$('#det').classList.remove('on');toast('票先留着')};
+  delete t._new}
+$('#dbody').onclick=e=>{const s=e.target.closest('.stop');if(!s||!cur||cur.st==='new')return;const x=cur.stops[+s.dataset.i];x.done=!x.done;save();paintDet()};
+$('#dback').onclick=()=>{$('#det').classList.remove('on');paint()};
+$('#drm').onclick=()=>{if(!cur)return;if($('#drm').dataset.sure){T=T.filter(t=>t.id!==cur.id);save();$('#det').classList.remove('on');paint();toast('退掉了');delete $('#drm').dataset.sure;$('#drm').textContent='退票'}else{$('#drm').dataset.sure=1;$('#drm').textContent='真的退？';setTimeout(()=>{delete $('#drm').dataset.sure;$('#drm').textContent='退票'},2500)}};
+function stampIt(st){const card=$('#dbody .tk'),sp=$('#stamper'),r=card.getBoundingClientRect(),a=$('#det').getBoundingClientRect();
+  $('#dbody').scrollTo({top:0});const sw=a.width*.34,x=r.left-a.left+r.width*.87-sw/2,y=r.top-a.top+r.height*.5-sw/.75+sw*.2;
+  sp.style.setProperty('--tx',x+'px');sp.style.setProperty('--ty',y+'px');sp.classList.remove('go');void sp.offsetWidth;sp.classList.add('go');card.classList.add('shake');
+  cur.st=st;cur.stAt=Date.now();cur._new=1;if(st==='gone')cur.stops.forEach(s=>s.done=true);save();
+  setTimeout(()=>{paintDet();toast(st==='on'?'上船了，日子记着':'这张收进去过的里')},520)}
+save();paint();$('#list').classList.add('first');setTimeout(()=>$('#list').classList.remove('first'),1200);
+</script></body></html>

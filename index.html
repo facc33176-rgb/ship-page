@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HARBOR</title>
+<style>
+:root{--paper:#f1e9d8;--ink:#3a2a1a;--soft:rgba(58,42,26,.6);--line:rgba(58,42,26,.16);--red:#b8503f;--navy:#5a6f86;
+  --sans:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;--serif:"Songti SC","Noto Serif SC","STSong","SimSun",serif;--latin:"Didot","Bodoni 72","Bodoni MT","Times New Roman",serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#e9e1cd}
+body{color:var(--ink);font-family:var(--sans);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+button{font-family:inherit;color:inherit}
+#app{position:relative;max-width:430px;height:100%;min-height:560px;margin:0 auto;overflow:hidden;display:flex;flex-direction:column;background:var(--paper)}
+.scene{position:relative;flex:1;min-height:0;display:flex;justify-content:center;align-items:flex-end;background:linear-gradient(#efe9dc,#e8e0d5)}
+.pic{position:relative;flex:none}
+.pic>img.bg{opacity:0;transition:opacity 1.6s ease}.pic>img.bg.on{opacity:1}
+.pic>img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;-webkit-mask:linear-gradient(transparent 0,#000 5%);mask:linear-gradient(transparent 0,#000 5%)}
+.head{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;align-items:flex-start;justify-content:center;padding:calc(10px + env(safe-area-inset-top)*.7) 12px 0;pointer-events:none}
+.head h1{margin:0;font-family:var(--latin);font-weight:400;font-size:26px;letter-spacing:.2em;color:#5a6f86;text-shadow:0 1px 0 rgba(255,255,255,.7)}
+.head h1::before{content:"⚓";font-size:17px;margin-right:8px;vertical-align:2px;letter-spacing:0}
+.date{position:absolute;right:12px;top:calc(8px + env(safe-area-inset-top)*.7);width:44px;background:#fffaf0;border-radius:4px;text-align:center;box-shadow:0 2px 5px rgba(40,30,10,.3);overflow:hidden;font-family:var(--serif)}
+.date i{display:block;font-style:normal;font-size:9.5px;background:var(--red);color:#fff;padding:1px 0}
+.date b{display:block;font-size:19px;line-height:1.1;color:var(--red)}.date u{display:block;text-decoration:none;font-size:9px;color:var(--soft);padding-bottom:2px}
+/* 木牌 */
+.sign{position:absolute;z-index:5;transform:translate(-50%,-50%);border:0;padding:13px 13px 6px;font-family:var(--serif);font-weight:700;font-size:12.5px;letter-spacing:.06em;color:#5a3312;white-space:nowrap;cursor:pointer;
+  background:url(img/sign.webp) center/100% 100% no-repeat;filter:saturate(.6) brightness(1.04) drop-shadow(0 2px 2px rgba(40,25,5,.3))}
+.sign:active{transform:translate(-50%,-50%) scale(.94)}
+.sign small{position:absolute;right:-4px;top:2px;min-width:17px;height:17px;border-radius:9px;background:var(--red);color:#fff;font-family:var(--sans);font-size:10.5px;font-weight:600;line-height:17px;padding:0 4px;letter-spacing:0;box-shadow:0 0 0 1.5px #fff5dc}
+.sign.new{animation:nudge 3s ease-in-out infinite}@keyframes nudge{0%,100%{transform:translate(-50%,-50%) rotate(-2deg)}50%{transform:translate(-50%,-50%) rotate(2deg)}85%{transform:translate(-50%,-50%) rotate(-5deg)}92%{transform:translate(-50%,-50%) rotate(4deg)}}
+.hit{position:absolute;border:0;background:none;padding:0;cursor:pointer;z-index:4}
+/* 活的小东西 */
+.lamp{position:absolute;left:93.5%;top:10.4%;width:8px;height:8px;margin:-4px;border-radius:50%;background:#fff3b0;box-shadow:0 0 12px 6px rgba(255,236,150,.9);animation:lamp 2.4s ease-in-out infinite;pointer-events:none;z-index:3}@keyframes lamp{50%{opacity:.35}}
+.smoke{position:absolute;left:52%;top:15.2%;width:0;height:0;z-index:3;pointer-events:none}
+.smoke i{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.85);opacity:0;animation:puff 4s ease-out infinite}
+.smoke i:nth-child(2){animation-delay:1.3s}.smoke i:nth-child(3){animation-delay:2.6s}@keyframes puff{0%{opacity:.9;transform:scale(.5)}100%{opacity:0;transform:translate(20px,-46px) scale(2.2)}}
+.gull{position:absolute;width:16px;height:8px;z-index:3;pointer-events:none;animation:fly 24s linear infinite}
+.gull::before,.gull::after{content:"";position:absolute;top:0;width:8px;height:8px;border-top:1.5px solid rgba(90,80,70,.6);border-radius:50% 50% 0 0}
+.gull::before{left:0;transform:rotate(-14deg)}.gull::after{right:0;transform:rotate(14deg)}@keyframes fly{from{transform:translateX(-30px)}to{transform:translateX(460px) translateY(-24px)}}
+.bulbs{position:absolute;left:66.5%;top:57.6%;width:20%;height:6%;display:none;z-index:3;pointer-events:none;background:radial-gradient(circle,rgba(255,240,170,.95) 0 28%,transparent 32%) 0 0/12.5% 100%;mix-blend-mode:screen;animation:tw 1.2s steps(2) infinite}@keyframes tw{50%{opacity:.35}}
+.shine{position:absolute;right:0;top:16.5%;width:30%;height:9%;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.22) 0 1px,transparent 1px 7px);-webkit-mask:linear-gradient(90deg,transparent,#000 40%);mask:linear-gradient(90deg,transparent,#000 40%);animation:shim 3s ease-in-out infinite}@keyframes shim{50%{transform:translateX(5px);opacity:.5}}
+.glow{position:absolute;width:26%;aspect-ratio:1.6;margin:-8% 0 0 -13%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,225,140,.55),rgba(255,225,140,0));mix-blend-mode:screen;pointer-events:none;z-index:3;animation:lamp 3.4s ease-in-out infinite}
+.clock{position:absolute;left:41.6%;top:23.2%;width:8.2%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#f7efd8;z-index:3;pointer-events:none}
+.clock i{position:absolute;left:50%;bottom:50%;background:#3a2a1a;border-radius:2px;transform-origin:50% 100%}
+.clock .hh{width:8%;height:27%;margin-left:-4%}.clock .mm{width:5.5%;height:39%;margin-left:-2.75%}.clock .ss{width:2.5%;height:42%;margin-left:-1.25%;background:var(--red)}
+.cal{position:absolute;left:42%;top:29.1%;transform:translate(-50%,-50%);z-index:3;pointer-events:none;text-align:center;font-family:var(--serif);line-height:1}
+.cal b{display:block;font-size:13px;color:var(--red)}.cal u{display:block;text-decoration:none;font-size:6.5px;color:#6a5a44;margin-top:1px}
+.shipwrap{position:absolute;inset:0;z-index:50;background:#f3ecd9;opacity:0;pointer-events:none;transform:scale(.25);transform-origin:var(--ox,72%) var(--oy,30%);transition:transform .45s cubic-bezier(.3,.9,.3,1),opacity .3s}
+.shipwrap.on{opacity:1;pointer-events:auto;transform:none}.shipwrap iframe{width:100%;height:100%;border:0;display:block}
+.shipwrap button{position:absolute;left:14px;top:calc(12px + env(safe-area-inset-top)*.7);z-index:2;border:0;background:rgba(255,250,238,.95);border-radius:16px;height:30px;padding:0 12px;font-size:12.5px;font-weight:500;box-shadow:0 1px 4px rgba(40,30,10,.3);cursor:pointer}
+/* 会转的唱片：从白天那张图里抠出来的圆 */
+.disc{position:absolute;left:14.85%;top:57.55%;width:11.4%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;z-index:2;pointer-events:none;background:url(img/disc.webp) center/100% 100% no-repeat;animation:spin 5.5s linear infinite;transition:filter 1.6s}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+body[data-t=night] .disc{filter:brightness(.62) sepia(.25) saturate(1.1)}body[data-t=dusk] .disc{filter:brightness(.85) sepia(.2)}body[data-t=dawn] .disc{filter:brightness(1.02) saturate(.8)}
+/* 夜里灯塔的光 */
+.beam{position:absolute;left:93.5%;top:10.4%;width:0;height:0;z-index:3;pointer-events:none;opacity:0;transition:opacity 1.6s}
+.beam b{position:absolute;left:-170px;top:-170px;width:340px;height:340px;border-radius:50%;background:conic-gradient(from 150deg,rgba(255,240,180,0),rgba(255,240,180,.55) 14deg,rgba(255,240,180,0) 28deg,transparent 28deg);-webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.4) 45%,transparent 70%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.4) 45%,transparent 70%);animation:sweep 8s ease-in-out infinite alternate}
+@keyframes sweep{from{transform:rotate(-30deg)}to{transform:rotate(60deg)}}
+body[data-t=night] .beam{opacity:1}body[data-t=dusk] .beam{opacity:.45}
+body[data-t=dawn] .lamp{opacity:.25;animation:none}
+body[data-t=night] .glow,body[data-t=dusk] .glow{animation-duration:2.4s}body[data-t=dawn] .glow,body[data-t=day] .glow{opacity:.5}
+body[data-t=night] .gull{display:none}
+body[data-t=night] .head h1{color:#e9dfc8;text-shadow:none}
+body[data-t=night] .clock{background:#f3e3b4;box-shadow:0 0 10px 3px rgba(255,220,140,.5)}
+.scene{transition:background 1.6s}
+/* 木牌在风里轻轻晃 */
+.sign{transform-origin:50% 0;animation:hang var(--hs,5s) ease-in-out infinite;animation-delay:var(--hd,0s)}
+@keyframes hang{0%,100%{transform:translate(-50%,-50%) rotate(-1.6deg)}50%{transform:translate(-50%,-50%) rotate(1.6deg)}}
+nav button{animation:nhang var(--hs,4s) ease-in-out infinite;animation-delay:var(--hd,0s)}
+@keyframes nhang{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+nav button.on{animation-name:nhang2}@keyframes nhang2{0%,100%{transform:translateY(-5px) rotate(-2.6deg)}50%{transform:translateY(-5px) rotate(.6deg)}}
+.tod{position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top)*.7);z-index:7;border:0;background:rgba(255,250,238,.9);border-radius:15px;height:28px;padding:0 10px;font-size:12px;font-weight:500;color:#5a4a3a;box-shadow:0 1px 4px rgba(40,30,10,.25);cursor:pointer;pointer-events:auto}
+/* 底下：街道名 */
+nav{position:relative;flex:none;display:flex;gap:2px;align-items:flex-end;padding:0 6px calc(6px + env(safe-area-inset-bottom));margin-top:-26px;z-index:7;
+  background:linear-gradient(transparent 0,var(--np,var(--paper)) 26px);transition:background 1.6s}
+nav::before{content:"";position:absolute;left:10px;right:10px;top:21px;height:5px;border-radius:3px;background:linear-gradient(#b08a5a,#8a6a44);box-shadow:0 1px 2px rgba(40,25,5,.3)}
+nav button{position:relative;flex:1;border:0;background:none;padding:26px 0 0;display:flex;flex-direction:column;align-items:center;cursor:pointer;transform-origin:50% 22px}
+nav button::before{content:"";position:absolute;left:50%;top:22px;width:1px;height:10px;background:#7a5a3a;box-shadow:-12px 0 0 #7a5a3a,12px 0 0 #7a5a3a;opacity:.0}
+nav button i{display:block;width:100%;padding:9px 0 7px;background:url(img/sign.webp) center/100% 100% no-repeat;filter:saturate(.55) brightness(1.05);font-style:normal}
+nav button img{display:block;height:30px;margin:0 auto 1px;object-fit:contain;filter:saturate(1.6)}
+nav button b{display:block;font-family:var(--serif);font-weight:700;font-size:12px;color:#5a3a1c;letter-spacing:.04em}
+nav button.on{transform:translateY(-5px) rotate(-2deg)}nav button.on b{color:var(--red)}nav button.on i{filter:saturate(.9) brightness(1.08)}
+nav button:active{transform:rotate(3deg)}
+nav button.sw{animation:nsw .7s cubic-bezier(.3,1.6,.5,1)}@keyframes nsw{30%{transform:rotate(8deg)}60%{transform:rotate(-6deg)}}
+/* 卡片 */
+.veil{position:absolute;inset:0;z-index:30;background:rgba(40,35,30,.45);opacity:0;pointer-events:none;transition:opacity .25s}.veil.on{opacity:1;pointer-events:auto}
+.card{position:absolute;left:22px;right:22px;top:50%;z-index:31;background:#fffdf6;border-radius:14px;padding:18px 18px 12px;box-shadow:0 18px 50px rgba(20,20,20,.45);transform:translateY(-46%) scale(.3) rotate(-8deg);opacity:0;pointer-events:none;transition:transform .34s cubic-bezier(.2,1.4,.4,1),opacity .2s;transform-origin:var(--ox,50%) var(--oy,50%)}
+.card.on{transform:translateY(-50%) rotate(-1deg);opacity:1;pointer-events:auto}
+.card::before{content:"";position:absolute;inset:7px;border:1px dashed rgba(58,42,26,.25);border-radius:9px;pointer-events:none}
+.card h3{margin:0;text-align:center;font-family:var(--serif);font-size:20px}.card p{margin:4px 0 10px;text-align:center;font-size:12.5px;color:var(--soft)}
+.card ul{list-style:none;margin:0;padding:0;position:relative}
+.card li{display:flex;align-items:center;padding:11px 4px;border-top:1px solid var(--line);font-size:14.5px;cursor:pointer}
+.card li em{font-style:normal;font-size:12px;color:var(--soft);margin-left:auto}.card li em.hot{color:var(--red);font-weight:600}.card li::after{content:"›";color:var(--soft);margin-left:8px}
+.toast{position:absolute;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translate(-50%,10px);background:rgba(40,30,20,.9);color:#fff;font-size:12.5px;padding:7px 13px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;z-index:40;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
+/* 底下一排五块木牌；我们的家和公告板的牌子留在画里 */
+nav button small{position:absolute;right:2px;top:20px;min-width:16px;height:16px;border-radius:8px;background:#a8322a;color:#fff;font-size:10px;line-height:16px;padding:0 4px;box-shadow:0 0 0 1.5px #fff5dc;z-index:2}
+/* 钟面：四张底图里钟楼的位置差一点，各自对位；只盖住画里原来的指针，留着画的刻度 */
+.clock{left:calc(41.6% + var(--cdx,0%))!important;top:calc(23.5% + var(--cdy,0%))!important;width:7.4%!important;background:radial-gradient(closest-side,var(--cf,#f1e7d2) 0 66%,transparent 78%)!important;box-shadow:none!important;transition:left 1.2s,top 1.2s}
+.clock::after{content:"";position:absolute;left:50%;top:50%;width:9%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:#8a6a3a}
+.clock .hh{height:24%!important}.clock .mm{height:33%!important}.clock .ss{height:35%!important}
+.cal{left:calc(42% + var(--cdx,0%) + var(--kdx,0%))!important;top:calc(29.1% + var(--kdy,0%))!important;transition:left 1.2s,top 1.2s}
+.pic[data-sky=dawn]{--cf:#e7e2e0;--kdy:.45%;--kdx:.3%}.pic[data-sky=day]{--cf:#f1e7d2}
+.pic[data-sky=dusk]{--cf:#eed8bb;--cdx:-1.4%;--kdy:.5%;--kdx:.35%}.pic[data-sky=night]{--cf:#f5dc9a;--cdx:-1.45%;--kdy:.5%;--kdx:.3%}
+body.under .scene *,body.under nav *{animation-play-state:paused!important}
+.clock .ss{transition:transform .28s cubic-bezier(.3,2.6,.5,1)}
+
+/* 统一角标：红底白字、18 高、12 号、一圈米白描边。全站同一个样子 */
+.sign small,nav button small{min-width:18px!important;height:18px!important;line-height:18px!important;border-radius:9px!important;padding:0 5px!important;background:#a8322a!important;color:#fff!important;font:600 12px/18px -apple-system,"PingFang SC","Helvetica Neue",sans-serif!important;font-style:normal!important;letter-spacing:0!important;text-align:center!important;box-shadow:0 0 0 1.5px #fbf3e2,0 1px 2px rgba(40,20,10,.35)!important;box-sizing:border-box!important}
+
+/* 动效减法：常驻循环每屏最多三样，挂着的东西改成手碰到、滑动带到才晃（fx.js） */
+.sign:not(.new){animation:none;transform:translate(-50%,-50%)}nav button:not(.on){animation:none}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="scene" id="scene"><div class="pic" id="pic"><img class="bg" data-t="day" data-src="img/harbor.webp" alt="" decoding="async"><img class="bg" data-t="dawn" data-src="img/dawn.webp" alt="" decoding="async"><img class="bg" data-t="dusk" data-src="img/dusk.webp" alt="" decoding="async"><img class="bg" data-t="night" data-src="img/night.webp" alt="" decoding="async"><i class="disc" id="disc"></i><div class="beam"><b></b></div>
+    <i class="lamp"></i><div class="smoke"><i></i><i></i><i></i></div><i class="glow" style="left:74%;top:49.5%"></i><i class="glow" style="left:53%;top:23.5%;width:12%;animation-delay:-1.2s"></i><div class="clock"><i class="hh"></i><i class="mm"></i><i class="ss"></i></div><div class="cal"><b id="cD"></b><u id="cW"></u></div><i class="shine"></i>
+    <i class="gull" style="left:6%;top:9%"></i><i class="gull" style="left:-20%;top:13%;animation-delay:-11s;transform:scale(.7)"></i>
+  </div>
+  <div class="head"><button class="tod" id="tod"></button><h1>HARBOR</h1><div class="date"><i id="dM"></i><b id="dD"></b><u id="dW"></u></div></div></div>
+  <nav id="nav"></nav>
+  <div class="shipwrap" id="roomwrap"></div><div class="shipwrap" id="shipwrap"><button id="ashore">‹ 上岸</button></div><div class="veil" id="veil"></div><div class="card" id="card"></div><div class="toast" id="toast"></div>
+</div>
+<script>
+/* 演示数据。x,y 是木牌在画里的位置（百分比），box 是整栋房子的点击范围 */
+const PLACES=[
+ {name:'我们的家',sub:'船上',x:72,y:10.6,n:3,ship:1,box:[48,13,50,19]},
+ {name:'回忆',sub:'钟楼',x:40,y:10.2,box:[32,13,17,21],rows:[['日历',''],['一日一页',''],['记忆','']]},
+ {name:'邮局',sub:'信件和明信片',x:19,y:19.2,n:1,box:[2,21,34,21],rows:[['他寄来的信','1 封没拆',1],['写一封',''],['明信片','']]},
+ {name:'小戏院',sub:'一起看片',x:74,y:33.4,box:[53,35,43,24],rows:[['今晚放什么',''],['看过的','']]},
+ {name:'唱片行',sub:'一起听歌',x:12,y:41.4,box:[2,43,36,22],rows:[['现在放的',''],['他推给你的',''],['你推给他的','']]},
+ {name:'书店',sub:'一起读书',x:65,y:59.6,box:[40,61,50,25],rows:[['在读的',''],['他写给你的书','']]},
+ {name:'公告板',sub:'便签',x:13,y:64.4,box:[1,65,26,22],rows:[['他贴的','3 张'],['你贴的','2 张'],['贴一张','']]}
+];
+const STREETS=[['邮局','mail','邮局'],['钟楼','clock','回忆'],['小戏院','moon','小戏院'],['唱片行','disc','唱片行'],['书店','book','书店']],GO={},BADGE={},SIGN={};
+const $=s=>document.querySelector(s);let tT;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>e.classList.remove('on'),1500)}
+const pic=$('#pic'),scene=$('#scene'),R=982/1602;
+const SKY={dawn:['#e3e3ec','#d8d7e4','清晨'],day:['#eee9e1','#e8e0d5','白天'],dusk:['#a59ba7','#8f8292','黄昏'],night:['#0a394e','#0a394e','夜里']};
+function fit(){const W=scene.clientWidth,H=scene.clientHeight;let w=W,h=W/R;if(h>H){h=H;w=H*R}pic.style.width=w+'px';pic.style.height=h+'px';document.documentElement.style.setProperty('--k',Math.min(1.15,w/390))}
+fit();addEventListener('resize',fit);
+/* 小镇跟着真实时间走：5～8 清晨，8～17 白天，17～19:30 黄昏，其余夜里。左上角可以先偷看别的时间 */
+let peek=null;const ORDER=['dawn','day','dusk','night'];
+function real(){const d=new Date(),h=d.getHours()+d.getMinutes()/60;return h>=5&&h<8?'dawn':h<17&&h>=8?'day':h>=17&&h<19.5?'dusk':'night'}
+function setTime(){const t=peek||real();document.body.dataset.t=t;document.querySelectorAll('.pic>img.bg').forEach(i=>{const on=i.dataset.t===t;if(on&&!i.getAttribute('src'))i.src=i.dataset.src;i.classList.toggle('on',on)});pic.dataset.sky=t;scene.style.background=`linear-gradient(${SKY[t][0]},${SKY[t][1]})`;$('#tod').textContent=(peek?'偷看 · ':'现在 · ')+SKY[t][2]+' ⇄';$('nav').style.setProperty('--np',t==='night'?'#4a3a4c':'')}
+window.setPeek=k=>{peek=(k&&k!==real())?k:null;setTime()};
+$('#tod').onclick=()=>{const cur=peek||real(),nx=ORDER[(ORDER.indexOf(cur)+1)%4];peek=nx===real()?null:nx;setTime()};setTime();setInterval(setTime,60000);
+
+function openCard(p,el){const c=$('#card'),a=$('#app').getBoundingClientRect(),r=el.getBoundingClientRect();c.style.setProperty('--ox',((r.left+r.width/2-a.left-22)/(a.width-44)*100)+'%');
+  c.innerHTML=`<h3>${p.name}</h3><p>${p.sub}</p><ul>${p.rows.map(r=>`<li>${r[0]}<em class="${r[2]?'hot':''}">${r[1]||''}</em></li>`).join('')}</ul>`;
+  c.querySelectorAll('li').forEach((li,i)=>li.onclick=()=>toast(p.rows[i][0]+' · 下一步做'));c.classList.add('on');$('#veil').classList.add('on')}
+$('#veil').onclick=()=>{$('#card').classList.remove('on');$('#veil').classList.remove('on')};
+const ROOMS={'邮局':'post/index.html','公告板':'note/index.html','回忆':'tower/index.html','唱片行':'music/index.html','小戏院':'cinema/index.html','书店':'books/index.html'};
+function openRoom(p,el){const w=$('#roomwrap'),a=$('#app').getBoundingClientRect(),r=el.getBoundingClientRect();w.style.setProperty('--ox',((r.left+r.width/2-a.left)/a.width*100)+'%');w.style.setProperty('--oy',((r.top+r.height*2-a.top)/a.height*100)+'%');
+  w.innerHTML='';const f=document.createElement('iframe');f.src=ROOMS[p.name];f.title=p.name;f.allow='fullscreen';f.setAttribute('allowfullscreen','');w.appendChild(f);w.classList.add('on')}
+window.closeRoom=()=>{const w=$('#roomwrap');w.classList.remove('on');setTimeout(()=>{if(!w.classList.contains('on'))w.innerHTML=''},520)};
+function openShip(el){const w=$('#shipwrap'),a=$('#app').getBoundingClientRect(),r=el.getBoundingClientRect();w.style.setProperty('--ox',((r.left+r.width/2-a.left)/a.width*100)+'%');w.style.setProperty('--oy',((r.top+r.height*2-a.top)/a.height*100)+'%');
+  let f=w.querySelector('iframe');if(!f){f=document.createElement('iframe');f.src='ship/index.html';f.title='船里';w.appendChild(f)}f.style.display='';w.offsetWidth;w.classList.add('on')}
+$('#ashore').onclick=()=>{const w=$('#shipwrap');w.classList.remove('on');setTimeout(()=>{const f=w.querySelector('iframe');if(f&&!w.classList.contains('on'))f.style.display='none'},520)};
+/* 盖住的时候，底下的镇子不白跑 */
+{let ut=0;const chk=()=>{const on=$('#roomwrap').classList.contains('on')||$('#shipwrap').classList.contains('on');clearTimeout(ut);if(on)ut=setTimeout(()=>document.body.classList.add('under'),520);else document.body.classList.remove('under')};['#roomwrap','#shipwrap'].forEach(q=>new MutationObserver(chk).observe($(q),{attributes:true,attributeFilter:['class']}))}
+function tick(){const d=new Date(),sc=d.getSeconds(),m=d.getMinutes()+sc/60,hh=d.getHours()%12+m/60;$('.hh').style.transform=`rotate(${hh*30}deg)`;$('.mm').style.transform=`rotate(${m*6}deg)`;$('.ss').style.transform=`rotate(${Math.floor(d/1000)%86400*6}deg)`}tick();setInterval(tick,1000);
+PLACES.forEach(p=>{const go=el=>p.ship?openShip(el):ROOMS[p.name]?openRoom(p,el):openCard(p,el);GO[p.name]=go;BADGE[p.name]=p.n||0;
+  const BN={'邮局':'postBadge','公告板':'noteBadge','唱片行':'shopBadge','书店':'bookBadge'};if(BN[p.name])window[BN[p.name]]=n=>{BADGE[p.name]=n||0;paintBadges()};
+  const b=document.createElement('button');b.className='hit';b.style.cssText=`left:${p.box[0]}%;top:${p.box[1]}%;width:${p.box[2]}%;height:${p.box[3]}%`;b.setAttribute('aria-label',p.name);b.onclick=()=>go(b);pic.appendChild(b);
+  if(p.name==='我们的家'||p.name==='公告板'){const g=document.createElement('button');g.className='sign';g.style.left=p.x+'%';g.style.top=p.y+'%';g.textContent=p.name;g.onclick=()=>go(g);pic.appendChild(g);SIGN[p.name]=g}});
+function paintBadges(){Object.entries(SIGN).forEach(([k,g])=>{const n=BADGE[k]||0;g.classList.toggle('new',!!n);g.innerHTML=k+(n?`<small>${n}</small>`:'')});document.querySelectorAll('#nav button').forEach(b=>{const n=BADGE[b.dataset.p]||0;let e=b.querySelector('small');if(n){if(!e){e=document.createElement('small');b.appendChild(e)}e.textContent=n}else if(e)e.remove();b.classList.toggle('new',!!n)})}
+STREETS.forEach(([n,k,p],i)=>{const b=document.createElement('button');b.dataset.p=p;b.innerHTML=`<i><img src="img/n_${k}.webp" alt=""><b>${n}</b></i>`;b.style.setProperty('--hs',(3.4+i*.4)+'s');b.style.setProperty('--hd',(-i*.9)+'s');b.onclick=()=>{b.classList.remove('sw');void b.offsetWidth;b.classList.add('sw');setTimeout(()=>GO[p]&&GO[p](b),220)};$('#nav').appendChild(b)});paintBadges();
+const d=new Date();$('#dM').textContent=(d.getMonth()+1)+'月';$('#dD').textContent=d.getDate();$('#dW').textContent='周'+'日一二三四五六'[d.getDay()];$('#cD').textContent=d.getDate();$('#cW').textContent=(d.getMonth()+1)+'月';
+</script>
+<script>/* imgRetry：图没下来就再要两次，免得夜里那张空着 */document.querySelectorAll('img').forEach(i=>{let n=0;const again=()=>{if(n++<2)setTimeout(()=>{const u=i.getAttribute('src').split('?')[0];i.src=u+'?r='+n},600*n)};i.addEventListener('error',again);if(i.complete&&!i.naturalWidth&&i.getAttribute('src'))again()});</script><script src="fx.js"></script><script>Fx.hang('nav button',{max:14,k:46});Fx.hang('.pic .sign',{max:12,pass:false});Fx.water(document.querySelector('#pic'),[[0,16,100,20],[70,30,100,40],[92,40,100,57],[87,57,100,68],[93,68,100,86]]);</script></body>
+</html>

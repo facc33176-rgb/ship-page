@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN" data-room="cinema"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>小戏院</title>
+<style>
+@font-face{font-family:"Letter";src:url(../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#f6e6c8;--paper:#fdf7e6;--ink:#3a2a1a;--soft:rgba(58,42,26,.6);--line:rgba(58,42,26,.14);--red:#a8322a;--gold:#c9972e;--navy:#2b4660}
+body[data-sky=night]{--bg:#2a2733;--paper:#3a3542;--ink:#efe3c8;--soft:rgba(239,227,200,.6);--line:rgba(239,227,200,.14)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button{font-family:inherit;color:inherit}
+.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.bar{flex:none;display:flex;align-items:center;gap:8px;height:calc(44px + env(safe-area-inset-top)*.7);padding:calc(env(safe-area-inset-top)*.7) 10px 0;background:var(--navy);color:#fdf3d8}
+.bar button{border:0;background:rgba(253,243,216,.14);color:#fdf3d8;height:28px;padding:0 11px;border-radius:14px;font-size:12.5px;cursor:pointer}
+.bar b{flex:1;text-align:center;font-weight:400;font-size:17px;margin-right:62px}
+.player{position:relative;flex:none;width:100%;aspect-ratio:16/9;background:#14100e;overflow:hidden}
+.player video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#14100e}
+.poster{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 24px;text-align:center;color:#f3e6c8;background:radial-gradient(90% 90% at 50% 45%,#3b3340,#17131a)}
+.poster b{font-family:"Letter","LetterAll","Kaiti SC",serif;font-weight:400;font-size:21px;line-height:1.3}.poster small{font-size:12px;opacity:.6}
+.pmid{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;justify-content:center;align-items:center;gap:40px;z-index:3;pointer-events:none}.pmid>*{pointer-events:auto}
+.big{width:56px;height:56px;border:0;border-radius:50%;background:rgba(253,243,216,.92);color:#2a1c10;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .25s,transform .2s;z-index:3}
+.big svg{width:24px;height:24px;fill:currentColor}.big:active{transform:scale(.92)}body.playing .big{opacity:0}body.playing .player.tap .big{opacity:1}
+body:not(.playing) .player.has .poster b{transform:translateY(-36px)}body:not(.playing) .player.has .poster small{transform:translateY(40px)}
+.pbar{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:8px;padding:14px 10px 6px;font-size:12px;color:#f3e6c8;font-variant-numeric:tabular-nums;background:linear-gradient(transparent,rgba(0,0,0,.6))}
+.pbar i{flex:1;height:22px;margin:-4px 0;position:relative;cursor:pointer;touch-action:none}.pbar i::before,.pbar i::after{margin-top:4px}
+.pbar button{flex:none;border:0;background:none;color:#f3e6c8;width:30px;height:26px;padding:0;cursor:pointer}.pbar button svg{width:18px;height:18px;fill:currentColor;display:block;margin:auto}.pbar i::before{content:"";position:absolute;left:0;right:0;top:5.5px;height:3px;border-radius:2px;background:rgba(255,255,255,.28)}.pbar i::after{content:"";position:absolute;left:0;top:5.5px;height:3px;width:calc(var(--prog,0)*100%);border-radius:2px;background:#e2b55a}
+.fly{position:absolute;left:100%;white-space:nowrap;z-index:2;font-size:14px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);animation:flyby 7s linear forwards;pointer-events:none}.fly.him{color:#ffd98a}
+@keyframes flyby{to{transform:translateX(calc(-100% - 480px))}}
+.meta{flex:none;padding:10px 14px 8px;border-bottom:1px solid var(--line)}
+.meta h2{margin:0;font-family:"Letter","LetterAll","Kaiti SC",serif;font-weight:400;font-size:19px;line-height:1.3}
+.meta .row{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:12px;color:var(--soft)}
+.duo{display:inline-flex;align-items:center;gap:4px}.duo i{width:7px;height:7px;border-radius:50%;background:#8a9a6a}body.playing .duo i{animation:blip 1.3s ease-in-out infinite}.duo i+i{animation-delay:.4s!important}@keyframes blip{50%{opacity:.35}}
+.meta .row span.sp{flex:1}
+.meta .row button{border:1px solid var(--line);background:none;border-radius:13px;height:26px;padding:0 10px;font-size:12px;cursor:pointer;color:var(--ink)}.meta .row button.on{color:var(--red);border-color:var(--red)}
+.talk{display:flex;gap:8px;margin-top:8px}.talk input{flex:1;min-width:0;height:34px;border:0;border-radius:17px;background:var(--card);padding:0 14px;font-size:16px;color:var(--ink);outline:none;box-shadow:inset 0 1px 2px rgba(80,55,20,.2);-webkit-user-select:text;user-select:text}
+.talk button{flex:none;border:0;border-radius:17px;height:34px;padding:0 14px;background:var(--navy);color:#fdf3d8;font-size:13px;cursor:pointer}
+.tabs{flex:none;display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;height:38px;padding:0 12px;font-size:14px;color:var(--soft);cursor:pointer;position:relative}
+.tabs button.on{color:var(--ink);font-weight:600}.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--red);border-radius:2px}
+.tabs em{font-style:normal;font-size:11px;opacity:.7;margin-left:3px}.tabs .sp{flex:1}
+.tabs .tool{font-size:12.5px;color:var(--ink)}.tabs .tool.on{color:var(--red)}
+.body{flex:1;overflow-y:auto;padding:8px 12px 20px;-webkit-overflow-scrolling:touch}
+.q{display:block;width:100%;height:34px;border:0;border-radius:17px;background:var(--card);padding:0 14px;font-size:14px;color:var(--ink);outline:none;box-shadow:inset 0 1px 2px rgba(80,55,20,.2);margin-bottom:8px;font-family:inherit;-webkit-user-select:text;user-select:text}
+.it{display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;padding:7px 2px;text-align:left;cursor:pointer;color:var(--ink);border-bottom:1px solid var(--line);animation:itin .3s ease both;animation-delay:calc(var(--i)*30ms);transition:opacity .3s,transform .3s,max-height .3s;max-height:90px}
+@keyframes itin{from{opacity:0;transform:translateY(8px)}}
+.th{position:relative;flex:none;width:112px;aspect-ratio:16/9;border-radius:5px;background:linear-gradient(140deg,var(--c2),var(--c));overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.th::after{content:"";position:absolute;inset:0;background:var(--art) center/26% no-repeat;opacity:.6}
+.it.now .th::before{content:"在放";position:absolute;left:5px;top:5px;z-index:2;background:rgba(20,16,14,.75);color:#ffd98a;font-size:12px;padding:1px 6px;border-radius:8px}
+.it .mid{flex:1;min-width:0}.it .mid b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500;font-size:14.5px;line-height:1.35}.it .mid span{display:block;margin-top:3px;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it u{flex:none;text-decoration:none;color:var(--gold);font-size:14px}
+.it .ck{display:none;flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--soft)}.list.picking .ck{display:block}.it.sel .ck{background:var(--navy);border-color:var(--navy);box-shadow:inset 0 0 0 3px var(--bg)}
+.it.gone{opacity:0;transform:translateX(30px);max-height:0;padding:0}
+.ln{display:flex;gap:8px;align-items:baseline;padding:7px 2px;border-bottom:1px solid var(--line);font-size:15px}.ln time{flex:none;font-size:12px;color:var(--soft);font-variant-numeric:tabular-nums;width:42px}.ln em{flex:none;font-style:normal;font-size:12px;color:var(--navy);width:14px}body[data-sky=night] .ln em{color:#9cc0de}
+.add{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;border:1.5px dashed var(--line);background:none;border-radius:8px;height:40px;margin-bottom:6px;font-size:13.5px;color:var(--ink);cursor:pointer}
+.empty{text-align:center;color:var(--soft);font-size:15px;padding:30px 0;line-height:1.8}
+.mbar{flex:none;background:var(--navy);color:#fdf3d8;padding:9px 14px calc(9px + env(safe-area-inset-bottom));display:none;align-items:center;gap:8px;font-size:13px}
+.mbar.on{display:flex}.mbar i{flex:1}.mbar button{border:0;border-radius:15px;height:30px;padding:0 12px;font-size:12.5px;cursor:pointer;background:rgba(253,243,216,.16);color:#fdf3d8}.mbar button:disabled{opacity:.35}.mbar .del{background:#a8322a}
+.veil{position:absolute;inset:0;z-index:20;background:rgba(40,28,14,.66);opacity:0;pointer-events:none;transition:opacity .22s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 22px}
+.veil.on{opacity:1;pointer-events:auto}
+.card{width:100%;max-width:330px;background:#f1dfb8;color:#3f2c18;border-radius:6px;padding:18px 20px 12px;box-shadow:3px 8px 18px rgba(0,0,0,.3)}
+.card small{font-size:12px;color:rgba(58,42,26,0.88)}.card h3{margin:2px 0 0;font-family:"Letter","LetterAll","Kaiti SC",serif;font-size:20px;font-weight:400}
+.card input,.card textarea{display:block;width:100%;border:0;border-bottom:1px solid rgba(110,74,34,.3);background:none;color:#3f2c18;font-size:16px;padding:7px 0;margin-top:6px;outline:none;font-family:inherit;resize:none;-webkit-user-select:text;user-select:text}.card textarea{height:70px;line-height:1.5}
+.cacts{width:100%;max-width:330px;display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.cacts button{border:0;border-radius:18px;height:36px;padding:0 15px;font-size:13.5px;cursor:pointer;background:rgba(253,247,230,.16);color:#f3e6c8}.cacts .go{background:#f1dfb8;color:#3a2a1a}
+.toast{position:absolute;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translate(-50%,10px);background:#3a2a1a;color:#fdf7e6;font-size:12.5px;padding:7px 14px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;z-index:60;white-space:nowrap}.toast.on{opacity:1;transform:translate(-50%,0)}
+/* 全屏横过来 */
+.ptop,.psay,.sk{display:none}
+.player.full{position:fixed;z-index:40;left:0;top:0;width:100%;height:100%;aspect-ratio:auto}
+.player.full.rot{left:50%;top:50%;transform:translate(-50%,-50%) rotate(90deg)}
+.player.full .ptop{display:flex;position:absolute;left:0;right:0;top:0;z-index:4;align-items:center;gap:8px;padding:10px 14px 18px;color:#f3e6c8;background:linear-gradient(rgba(0,0,0,.6),transparent)}
+.player.full .ptop b{flex:1;font-family:"Letter","LetterAll","Kaiti SC",serif;font-weight:400;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player.full .ptop button,.player.full .psay button{border:0;background:rgba(253,243,216,.16);color:#fdf3d8;height:30px;padding:0 12px;border-radius:15px;font-size:12.500px;cursor:pointer;white-space:nowrap}
+.player.full .sk{display:block;border:0;background:rgba(253,243,216,.16);color:#fdf3d8;width:46px;height:46px;border-radius:50%;font-size:13px;cursor:pointer}
+.player.full .pmid{gap:56px}.player.full .big{width:64px;height:64px}
+.player.full .psay{display:flex;position:absolute;right:14px;bottom:44px;z-index:4;gap:6px;width:46%}.player.full .psay input{flex:1;min-width:0;height:30px;border:0;border-radius:15px;background:rgba(253,243,216,.9);color:#2a1c10;padding:0 12px;font-size:16px;outline:none;-webkit-user-select:text;user-select:text}
+.player.full .pbar{padding:20px 16px 12px;font-size:12px}
+.player.full .poster b{font-size:24px;transform:translateY(-84px)!important}.player.full .poster small{transform:translateY(78px)!important}.player.full .fly{font-size:18px}
+.player.full .ptop,.player.full .psay,.player.full .pbar,.player.full .sk{transition:opacity .25s}
+body.playing .player.full:not(.tap) .ptop,body.playing .player.full:not(.tap) .psay,body.playing .player.full:not(.tap) .pbar,body.playing .player.full:not(.tap) .sk{opacity:0;pointer-events:none}
+.player.nodm .fly{display:none}
+/* 进门：一张电影票，撕开 */
+.gate{position:absolute;inset:0;z-index:50;background:rgba(30,22,18,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s .3s}
+.gate.done{opacity:0;pointer-events:none}
+.tk{--cut:70.2%;--ar:2.249;position:relative;width:88%;max-width:360px;aspect-ratio:var(--ar);filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));animation:tkin .55s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes tkin{from{transform:translateY(40px) rotate(-6deg) scale(.9);opacity:0}}
+.tk .p{position:absolute;top:0;bottom:0;overflow:hidden;transition:transform .6s cubic-bezier(.5,0,.3,1),opacity .5s .2s}
+.tk .p img{position:absolute;top:0;height:100%;max-width:none;display:block;pointer-events:none}
+.tk .a{left:0;width:var(--cut)}.tk .a img{left:0}.tk .b{right:0;width:calc(100% - var(--cut));cursor:grab;touch-action:none;transform-origin:0 100%}.tk .b img{right:0}
+.gate.done .tk .a{transform:translate(-30px,10px) rotate(-5deg);opacity:0}.gate.done .tk .b{transform:translate(120px,-50px) rotate(34deg)!important;opacity:0}
+.tk .txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#7d1a1a;text-align:center;pointer-events:none}
+.tk .a .txt{padding:0 4% 0 10%}.tk .a b{font-family:"Letter","LetterAll","Kaiti SC",serif;font-weight:400;font-size:27px;letter-spacing:.2em;margin-right:-.2em}
+.tk .a span{font-size:12px;letter-spacing:.3em;margin:-1px -.3em 0 0;opacity:.85}.tk .a u{text-decoration:none;font-size:12px;margin-top:8px;border-top:1px solid rgba(125,26,26,.5);border-bottom:1px solid rgba(125,26,26,.5);padding:3px 12px;font-variant-numeric:tabular-nums}
+.tk .a em{font-style:normal;font-family:"Letter","LetterAll","Kaiti SC",serif;font-size:14px;margin-top:5px;color:#5a2a20}
+.tk .b .txt{font-size:12px;letter-spacing:.3em;writing-mode:vertical-rl;padding-right:14%}
+.gate p{color:#f3e6c8;font-size:13px;margin-top:24px;letter-spacing:.08em;animation:nudge 1.6s ease-in-out infinite}@keyframes nudge{50%{transform:translateX(6px)}}
+.gate .skip{position:absolute;left:12px;top:calc(12px + env(safe-area-inset-top));border:0;background:none;color:#f3e6c8;font-size:13px;cursor:pointer;padding:6px}
+
+/* 片单：整张票是想看的，撕过的票根是看过的 */
+.wall2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px;padding:2px 0}
+.tkc{position:relative;min-width:0;border:0;background:none;padding:0;aspect-ratio:2.249;cursor:pointer;filter:drop-shadow(1px 3px 4px rgba(40,20,5,.35));animation:itin .35s ease both;animation-delay:calc(var(--i)*35ms);transition:opacity .3s,transform .3s}
+.tkc:active{transform:scale(.97)}
+.tkm,.tks{position:absolute;top:0;bottom:0;overflow:hidden}.tkm{left:0;width:70.2%}.tks{right:0;width:29.8%;transform-origin:0 100%}
+.tkm img,.tks img{position:absolute;top:0;height:100%;max-width:none;pointer-events:none}.tkm img{left:0;width:142.45%}.tks img{right:0;width:335.57%}
+.tt{position:absolute;inset:0;padding:0 5% 0 14%;display:flex;flex-direction:column;justify-content:center;text-align:left;color:#6d1c1c}
+.tt b{font-family:"Letter","LetterAll","Kaiti SC",serif;font-weight:400;font-size:14px;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tt small{font-size:12px;margin-top:3px;color:#7a4a38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tks em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;font-style:normal;font-size:12px;letter-spacing:.3em;color:#6d1c1c;padding-right:16%}
+.tkc .st{position:absolute;left:5%;top:9%;font-size:12px;color:#b3261e}
+.tkc.now .tkm::after{content:"在放";position:absolute;right:6%;bottom:11%;background:#2b4660;color:#fdf3d8;font-size:12px;padding:1px 6px;border-radius:8px}
+.tkc.seen .tkm{transform:rotate(-1.200deg)}.tkc.seen:nth-child(even) .tkm{transform:rotate(1deg)}
+.tkc.seen .hole{position:absolute;left:50%;top:10%;width:9px;height:9px;margin-left:-4.500px;border-radius:50%;background:var(--bg);box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}
+.tkc.tear .tks{animation:tearoff .75s cubic-bezier(.5,0,.3,1) .35s forwards}@keyframes tearoff{30%{transform:rotate(14deg)}100%{transform:translate(70px,-50px) rotate(40deg);opacity:0}}
+.tkc .ck{display:none;position:absolute;right:5%;top:9%;width:17px;height:17px;border-radius:50%;border:2px solid #6d1c1c;background:rgba(255,255,255,.5)}.wall2.picking .ck{display:block}
+.tkc.sel .tkm{outline:2.500px solid #2b4660;outline-offset:-2px}.tkc.sel .ck{background:#2b4660;border-color:#2b4660;box-shadow:inset 0 0 0 3px #f6e7c4}
+.tkc.gone{opacity:0;transform:translateY(24px) rotate(6deg)}
+/* 空着的时候：码头夜景垫底，片名写在帆上 */
+.poster{background:#2a2530 url(img/quay.webp) center 46%/cover no-repeat!important;color:#3f2c18!important;justify-content:flex-start!important;padding-top:11%!important}
+.poster::after{content:"";position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(transparent,rgba(20,14,18,.72));pointer-events:none}
+.poster b{position:relative;max-width:62%;font-size:19px!important;transform:none!important}.poster small{position:relative;color:rgba(63,44,24,0.88)!important;opacity:1!important;transform:none!important;max-width:60%}
+.player.has .pmid{top:63%}.player.full .pmid{top:60%}.player.full .poster{padding-top:15%!important}.player.full .poster b{font-size:26px!important}.player.full .poster small{display:none}.wall2.picking .tt{padding-right:16%}
+/* 小船和提灯 */
+.pbar i .boat{position:absolute;left:calc(var(--prog,0)*100%);top:-7px;width:20px;height:18px;margin-left:-10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Cpath d='M12 1v13H4z' fill='%23fdf3d8'/%3E%3Cpath d='M13.500 4v10h6z' fill='%23e2b55a'/%3E%3Cpath d='M2 15.500h20l-3 5H5z' fill='%23a8322a'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5));pointer-events:none}
+body.playing .pbar i .boat{animation:bob 1.8s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-1.500px) rotate(4deg)}}
+.duo{gap:5px!important}.duo i{position:relative;width:8px!important;height:10px!important;border-radius:3px 3px 2px 2px!important;background:#f0b955!important;box-shadow:0 0 0 1px #7c5a22,0 0 6px 1px rgba(255,200,110,.7)}.duo i::before{content:"";position:absolute;left:1.500px;right:1.500px;top:-4px;height:4px;border:1px solid #7c5a22;border-bottom:0;border-radius:3px 3px 0 0}
+.duo{padding-top:3px}
+/* 挂上木板底以后的补色 */
+.meta{background:rgba(253,247,230,.5)}.tabs .tool{color:#fdf3d8!important}.tabs .tool.on{color:#f0b955!important}.tabs em{color:inherit}
+.add{background:rgba(253,247,230,.45)!important;border-color:rgba(58,36,14,.35)!important}.q{margin-top:2px}.empty{color:rgba(58,36,14,0.88)!important}
+.ln{background:rgba(253,247,230,.55);padding:7px 8px!important;border-radius:6px;margin-bottom:4px;border:0!important}
+/* 顶上不要深蓝横栏：返回钮浮在夜景上，片场名字是一行小字 */
+.bar{position:absolute!important;left:0;right:0;top:0;z-index:6;background:none!important;height:calc(46px + env(safe-area-inset-top)*.7)!important;pointer-events:none}
+.bar button{pointer-events:auto;background:rgba(255,250,238,.92)!important;color:#3a2a1a!important;height:30px!important;border-radius:15px!important;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.bar b{color:#f6e6c0!important;text-shadow:0 1px 3px rgba(0,0,0,.6);font-size:15px!important;opacity:.9}
+</style><link rel="stylesheet" href="../skin.css"></head>
+<body><div id="app">
+  <div class="bar"><button id="back">‹ 回镇上</button><b class="hand">小戏院</b></div>
+  <div class="player" id="player"><video id="vid" playsinline preload="metadata" hidden></video><div class="poster" id="poster"></div><div class="ptop"><button id="fExit" aria-label="退出全屏">‹ 退出</button><b id="fTitle"></b><button id="fDm">弹幕 开</button><button id="fSp">1 倍</button></div><div class="pmid"><button class="sk" id="bk" aria-label="退 15 秒">−15</button><button class="big" id="big" aria-label="放或停"></button><button class="sk" id="fw" aria-label="进 15 秒">+15</button></div><div class="psay"><input id="fSay" maxlength="24" placeholder="跟他说一句"><button id="fSend">发</button></div><div class="pbar"><span id="pA">0:00:00</span><i id="pBar"><b class="boat"></b></i><span id="pB">0:00:00</span><button id="fBtn" aria-label="全屏"><svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM4 15h2v3h3v2H4zm14 0h2v5h-5v-2h3z"/></svg></button></div></div>
+  <div class="meta" id="meta"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="body" id="body"></div>
+  <div class="mbar" id="mbar"></div>
+  <div class="veil" id="veil"><div class="card" id="card"></div><div class="cacts" id="cacts"></div></div>
+  <div class="toast" id="toast"></div>
+  <div class="gate" id="gate"><button class="skip" id="gBack">‹ 回镇上</button><div class="tk" id="tk"><div class="p a"><img src="img/ticket.webp" alt=""><div class="txt"><b>小戏院</b><span>入场券</span><u id="tkD"></u><em>两位 · 一起看</em></div></div><div class="p b" id="stub"><img src="img/ticket.webp" alt=""><div class="txt">副券</div></div></div><p>沿着齿孔，把副券往右撕下来</p></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const D=864e5,KEY='cinema-1',FAKE=5400;
+const get=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?f:v}catch(e){return f}},set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800)};
+function load(){let a=get(KEY);if(!a){const n=Date.now();a=[
+  ['him',2*36e5,'（演示）他想看的一部','want',0,''],['me',1*D,'（演示）你想看的','want',0,''],['him',3*D,'（演示）排着队的第三部','want',1,''],['me',5*D,'（演示）第四部','want',0,''],
+  ['him',9*D,'（演示）上周一起看的','seen',1,'（演示）看完以后写的一句。'],['me',16*D,'（演示）更早看的','seen',0,''],['him',30*D,'（演示）上个月看的','seen',0,'（演示）']
+ ].map(([from,d,title,state,star,note],i)=>({id:i+1,from,t:n-d,title,state,star,note,seenT:state==='seen'?n-d+36e5:0,lines:[],src:''}));set(KEY,a)}return a}
+let justSeen=null;
+let L=load(),tab='want',now=get('cinema-now',null),playing=false,pos=0,q='',pick=false,sel=new Set(),timer=null;
+const V=$('#vid');
+const PAL=[['#8e3a30','#c98d74'],['#34506a','#8ea9b6'],['#a5803c','#dcc88f'],['#5b7557','#a9bf9c'],['#6e4d64','#bb9cae'],['#3f6770','#9dbdb8']];
+const ART=['M12 2.500l2.900 5.900 6.500.900-4.700 4.600 1.100 6.500L12 17.300l-5.800 3.100 1.100-6.500L2.600 9.300l6.500-.900z','M20 14.500A8.500 8.500 0 0 1 9.500 4 8.500 8.500 0 1 0 20 14.500z','M12 2a3 3 0 0 1 1 5.800V10h3v2h-3v6.900a6 6 0 0 0 5-5.900h2a8 8 0 0 1-16 0h2a6 6 0 0 0 5 5.900V12H8v-2h3V7.800A3 3 0 0 1 12 2z'];
+const look=s=>{const [c,c2]=PAL[s.id%PAL.length];return `--c:${c};--c2:${c2};--art:url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='#fff' d='${ART[s.id%3]}'/></svg>`).replace(/'/g,'%27')}")`};
+const fd=t=>{const d=new Date(t),n=new Date(),days=Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/D);return days===0?'今天':days===1?'昨天':days<7?days+' 天前':(d.getMonth()+1)+' 月 '+d.getDate()+' 日'};
+const hms=s=>{s=Math.floor(s||0);return Math.floor(s/3600)+':'+String(Math.floor(s%3600/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const cur=()=>L.find(s=>s.id===now)||null,real=()=>{const s=cur();return !!(s&&s.src)},len=()=>real()&&V.duration?V.duration:FAKE;
+const ICON={play:'<svg viewBox="0 0 24 24"><path d="M7 4.500v15l13-7.500z"/></svg>',pause:'<svg viewBox="0 0 24 24"><path d="M6 4.500h4.500v15H6zM13.500 4.500H18v15h-4.500z"/></svg>'};
+function paint(){if(real())pos=V.currentTime||0;document.body.style.setProperty('--prog',(pos/len()).toFixed(4));$('#pA').textContent=hms(pos);$('#pB').textContent=hms(len())}
+function setPlay(v){playing=v&&!!cur();document.body.classList.toggle('playing',playing);clearInterval(timer);if(real()){playing?V.play().catch(()=>{}):V.pause()}
+  if(real())V.playbackRate=rate;if(playing)timer=setInterval(()=>{if(!real()){pos+=rate;if(pos>=FAKE){finish();return}}paint()},1000);$('#big').innerHTML=ICON[playing?'pause':'play'];paint()}
+V.addEventListener('ended',()=>finish());
+function put(id,auto){now=id;set('cinema-now',now);pos=0;setPlay(false);head();list();if(auto!==false)setTimeout(()=>setPlay(true),200);$('#body').scrollTop=0}
+function finish(){const s=cur();setPlay(false);if(!s)return;s.state='seen';s.seenT=Date.now();set(KEY,L);now=null;set('cinema-now',null);tab='seen';justSeen=s.id;if(full)setFull(false);head();list();$('#body').scrollTop=0;setTimeout(()=>note(s,true),1250)}
+function fly(x,who){const e=document.createElement('span');e.className='fly'+(who==='him'?' him':'');e.textContent=x;e.style.top=[8,22,36][(fly.n=(fly.n||0)+1)%3]+'%';$('#player').appendChild(e);setTimeout(()=>e.remove(),7100)}
+function say(x){const s=cur();x=(x||'').trim();if(!s||!x)return;(s.lines=s.lines||[]).push({who:'me',x,at:pos});set(KEY,L);fly(x,'me');const first=s.lines.length===1;tabs();if(tab==='talk')list();
+  if(first)setTimeout(()=>{const y='（演示）他回的一句';s.lines.push({who:'him',x:y,at:pos});set(KEY,L);fly(y,'him');tabs();if(tab==='talk')list()},1600)}
+function head(){const s=cur();V.hidden=!real();if(real()){if(V.dataset.src!==s.src){V.src=s.src;V.dataset.src=s.src}}else{V.removeAttribute('src');V.dataset.src=''}
+  $('#poster').style.display=real()?'none':'';$('#poster').innerHTML=s?`<b>${esc(s.title)}</b><small>还没接片源，接上以后片子在这里放</small>`:'<b>今晚看什么</b><small>在下面点一部</small>';$('#big').style.display=s?'':'none';$('#player').classList.toggle('has',!!s);if(!s)document.querySelectorAll('.fly').forEach(e=>e.remove());$('#big').innerHTML=ICON[playing?'pause':'play'];$('#fTitle').textContent=s?s.title:'';$('#fBtn').style.display=s?'':'none';if(!s&&full)setFull(false);
+  $('#meta').innerHTML=s?`<h2>${esc(s.title)}</h2><div class="row"><span class="duo"><i></i><i></i>你和他一起看</span><span class="sp"></span><button id="mStar" class="${s.star?'on':''}">${s.star?'★ 收藏了':'收藏'}</button><button id="mDone">看完了</button></div><div class="talk"><input id="sayI" maxlength="24" placeholder="边看边跟他说一句"><button id="sayB">发</button></div>`:`<h2>今晚看什么</h2><div class="row">在下面的片单里点一部，两个人一起看。</div>`;
+  if(s){$('#mStar').onclick=()=>{s.star=s.star?0:1;set(KEY,L);head();list()};$('#mDone').onclick=finish;
+    const send=()=>{const i=$('#sayI');say(i.value);i.value=''};
+    $('#sayB').onclick=send;$('#sayI').addEventListener('keydown',e=>{if(e.key==='Enter')send()})}paint();tabs()}
+function tabs(){const s=cur(),n=k=>L.filter(x=>x.state===k).length;$('#tabs').innerHTML=`<button data-t="want" class="${tab==='want'?'on':''}">想看的<em>${n('want')}</em></button><button data-t="seen" class="${tab==='seen'?'on':''}">看过的<em>${n('seen')}</em></button>${s?`<button data-t="talk" class="${tab==='talk'?'on':''}">说过的话<em>${(s.lines||[]).length}</em></button>`:''}<span class="sp"></span>${tab!=='talk'?`<button class="tool${pick?' on':''}" id="pk">${pick?'完成':'整理'}</button>`:''}`;
+  document.querySelectorAll('#tabs [data-t]').forEach(b=>b.onclick=()=>{tab=b.dataset.t;q='';pick=false;sel.clear();$('#body').scrollTop=0;tabs();list()});const pk=$('#pk');if(pk)pk.onclick=()=>{pick=!pick;sel.clear();tabs();list()}}
+function list(){const B=$('#body');bar();if(tab==='talk'&&!cur())tab='want';
+  if(tab==='talk'){const s=cur(),a=[...(s.lines||[])].reverse();B.innerHTML=a.length?a.map(l=>`<div class="ln"><time>${hms(l.at)}</time><em>${l.who==='him'?'他':'你'}</em><span>${esc(l.x)}</span></div>`).join(''):'<div class="empty">这一场还没说过话。<br>在上面跟他说一句，会从画面上飘过去。</div>';return}
+  const all=L.filter(s=>s.state===tab),a=all.filter(s=>!q||s.title.includes(q)||(s.note||'').includes(q)).sort((x,y)=>(y.seenT||y.t)-(x.seenT||x.t));
+  B.innerHTML=`${all.length>5||q?`<input class="q" id="q" placeholder="搜片名" value="${esc(q)}">`:''}${tab==='want'&&!pick?'<button class="add" id="add">＋ 加一部想看的</button>':''}<div class="wall2${pick?' picking':''}">${a.map((s,i)=>{const sn=tab==='seen',tr=s.id===justSeen;return `<button class="tkc${sn?' seen':''}${tr?' tear':''}${s.id===now?' now':''}${sel.has(s.id)?' sel':''}" data-id="${s.id}" style="--i:${i}"><span class="tkm"><img src="img/ticket.webp" alt=""><span class="tt"><b>${esc(s.title)}</b><small>${sn?fd(s.seenT)+' 一起看的'+(s.note?' · '+esc(s.note):''):(s.from==='him'?'他':'你')+'想看 · '+fd(s.t)}</small></span>${s.star?'<em class="st">★</em>':''}${sn?'<i class="hole"></i>':''}<i class="ck"></i></span>${!sn||tr?'<span class="tks"><img src="img/ticket.webp" alt=""><em>副券</em></span>':''}</button>`}).join('')}</div>${a.length?'':`<div class="empty">${all.length?'没有找到':tab==='want'?'还没有想看的。':'还没有一起看完过。'}</div>`}`;
+  justSeen=null;B.querySelectorAll('.tkc').forEach(b=>b.onclick=()=>{const id=+b.dataset.id,s=L.find(x=>x.id===id);if(pick){sel.has(id)?sel.delete(id):sel.add(id);b.classList.toggle('sel');bar();return}tab==='want'?put(id):note(s)});
+  const qi=$('#q');if(qi)qi.oninput=()=>{q=qi.value.trim();const p=qi.selectionStart;list();const n=$('#q');n.focus();n.setSelectionRange(p,p)};
+  const ad=$('#add');if(ad)ad.onclick=()=>{$('#card').innerHTML='<small>加一部想一起看的</small><input id="fT" maxlength="30" placeholder="片名"><input id="fU" maxlength="300" placeholder="片子的地址（可以先不填）">';$('#cacts').innerHTML='<button id="cNo">算了</button><button class="go" id="cYes">加进去</button>';$('#veil').classList.add('on');setTimeout(()=>$('#fT').focus(),60);
+    $('#cNo').onclick=shut;$('#cYes').onclick=()=>{const t=$('#fT').value.trim();if(!t){toast('片名写一下');return}L.push({id:Date.now(),from:'me',t:Date.now(),title:t,state:'want',star:0,note:'',seenT:0,lines:[],src:$('#fU').value.trim()});set(KEY,L);shut();tabs();list();toast('加进去了')}}}
+function bar(){const M=$('#mbar'),on=pick&&tab!=='talk';M.classList.toggle('on',on);if(!on)return;const n=sel.size;
+  M.innerHTML=`<span>选了 ${n} 部</span><i></i><button id="bStar" ${n?'':'disabled'}>收藏</button>${tab==='want'?`<button id="bSeen" ${n?'':'disabled'}>标成看过</button>`:`<button id="bWant" ${n?'':'disabled'}>放回想看</button>`}<button id="bDel" class="del" ${n?'':'disabled'}>删掉</button>`;
+  const done=()=>{set(KEY,L);sel.clear();pick=false;head();list()};
+  $('#bStar').onclick=()=>{L.forEach(s=>{if(sel.has(s.id))s.star=1});done()};
+  const bs=$('#bSeen');if(bs)bs.onclick=()=>{L.forEach(s=>{if(sel.has(s.id)){s.state='seen';s.seenT=Date.now();if(s.id===now){setPlay(false);now=null;set('cinema-now',null)}}});done()};const bw=$('#bWant');if(bw)bw.onclick=()=>{L.forEach(s=>{if(sel.has(s.id)){s.state='want';s.seenT=0}});done()};
+  $('#bDel').onclick=e=>{const d=e.currentTarget;if(!d.dataset.s){d.dataset.s=1;d.textContent='确定删 '+n+' 部？';return}document.querySelectorAll('.tkc.sel').forEach(x=>x.classList.add('gone'));setTimeout(()=>{if(sel.has(now)){setPlay(false);now=null;set('cinema-now',null)}L=L.filter(s=>!sel.has(s.id));done()},320)}}
+const shut=()=>$('#veil').classList.remove('on');$('#veil').addEventListener('click',e=>{if(e.target.id==='veil')shut()});
+function note(s,just){$('#card').innerHTML=`<small>${just?'看完了。':''}${fd(s.seenT)} 一起看的${s.lines&&s.lines.length?' · 当时说了 '+s.lines.length+' 句':''}</small><h3>${esc(s.title)}</h3><textarea id="nT" maxlength="120" placeholder="看完想记一句什么">${esc(s.note||'')}</textarea>`;
+  $('#cacts').innerHTML=`<button id="nAgain">再看一遍</button><button class="go" id="nOk">记下</button>`;$('#veil').classList.add('on');
+  $('#nOk').onclick=()=>{s.note=$('#nT').value.trim();set(KEY,L);shut();list()};$('#nAgain').onclick=()=>{s.note=$('#nT').value.trim();s.state='want';set(KEY,L);shut();tab='want';put(s.id)}}
+const P=$('#player');let full=false,autoFull=false,rate=1;
+const poke=()=>{P.classList.add('tap');clearTimeout(P.t);P.t=setTimeout(()=>P.classList.remove('tap'),3000)};
+function layout(){if(!full){P.classList.remove('full','rot');P.style.width=P.style.height='';return}const land=innerWidth>innerHeight;P.classList.add('full');P.classList.toggle('rot',!land);if(land){P.style.width=P.style.height=''}else{P.style.width=innerHeight+'px';P.style.height=innerWidth+'px'}}
+async function setFull(v,auto){if(v&&!cur())return;full=v;autoFull=!!(v&&auto);layout();poke();try{if(v&&!auto){const d=document.documentElement;if(d.requestFullscreen)await d.requestFullscreen();if(screen.orientation&&screen.orientation.lock)await screen.orientation.lock('landscape')}else if(!v){if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock();if(document.fullscreenElement)await document.exitFullscreen()}}catch(e){}layout()}
+addEventListener('resize',()=>{const land=innerWidth>innerHeight;if(land&&!full&&cur()&&$('#gate').classList.contains('done'))setFull(true,true);else if(!land&&full&&autoFull)setFull(false);else layout()});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&full&&!autoFull&&innerWidth<=innerHeight){/* 系统退出了全屏 */}layout()});
+const frac=(e,el)=>{const r=el.getBoundingClientRect();return Math.max(0,Math.min(.999,P.classList.contains('rot')?(e.clientY-r.top)/r.height:(e.clientX-r.left)/r.width))};
+const seekTo=f=>{if(!cur())return;if(real())V.currentTime=f*len();else pos=f*FAKE;paint()},seek=d=>{if(!cur())return;const t=Math.max(0,Math.min(len()-1,(real()?V.currentTime:pos)+d));if(real())V.currentTime=t;else pos=t;paint();poke()};
+$('#big').onclick=e=>{e.stopPropagation();setPlay(!playing);poke()};
+P.onclick=()=>{if(P.classList.contains('tap')&&playing&&full){P.classList.remove('tap');return}poke()};
+P.querySelectorAll('.ptop,.psay,.pbar,.sk').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();poke()}));
+(()=>{const b=$('#pBar');let on=false;b.addEventListener('pointerdown',e=>{if(!cur())return;on=true;b.setPointerCapture(e.pointerId);seekTo(frac(e,b));poke()});b.addEventListener('pointermove',e=>{if(on){seekTo(frac(e,b));poke()}});const up=()=>{on=false};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up)})();
+$('#bk').onclick=()=>seek(-15);$('#fw').onclick=()=>seek(15);$('#fBtn').onclick=()=>setFull(!full);$('#fExit').onclick=()=>setFull(false);
+$('#fSp').onclick=e=>{const R=[1,1.25,1.5,2];rate=R[(R.indexOf(rate)+1)%R.length];if(real())V.playbackRate=rate;e.currentTarget.textContent=rate+' 倍'};
+$('#fDm').onclick=e=>{const off=P.classList.toggle('nodm');e.currentTarget.textContent='弹幕 '+(off?'关':'开')};
+const fs=()=>{const i=$('#fSay');say(i.value);i.value='';i.blur()};$('#fSend').onclick=fs;$('#fSay').addEventListener('keydown',e=>{if(e.key==='Enter')fs()});
+const leave=()=>{try{parent.closeRoom()}catch(e){history.back()}};$('#back').onclick=leave;$('#gBack').onclick=leave;
+function sync(){try{const t=parent.document.body.dataset.t;document.body.dataset.sky=t==='night'?'night':'day'}catch(e){}}sync();setInterval(sync,1500);
+$('#app').addEventListener('scroll',e=>{e.currentTarget.scrollTop=0});
+/* 撕票 */
+(()=>{const G=$('#gate'),T=$('#tk'),st=$('#stub'),d=new Date();$('#tkD').textContent=d.getFullYear()+' . '+String(d.getMonth()+1).padStart(2,'0')+' . '+String(d.getDate()).padStart(2,'0');let x0=null,dx=0,done=false;
+  const fit=()=>{const w=T.offsetWidth;T.querySelectorAll('.p img').forEach(i=>i.style.width=w+'px')};fit();addEventListener('resize',fit);
+  const tear=()=>{if(done)return;done=true;try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}st.style.transform='';G.classList.add('done')};
+  st.addEventListener('pointerdown',e=>{x0=e.clientX;dx=0;st.setPointerCapture(e.pointerId);st.style.transition='none'});
+  st.addEventListener('pointermove',e=>{if(x0==null||done)return;dx=Math.max(0,e.clientX-x0);st.style.transform=`translate(${dx*.5}px,${-dx*.12}px) rotate(${Math.min(22,dx*.22)}deg)`;if(dx>70){st.style.transition='';tear()}});
+  const up=()=>{if(x0==null)return;x0=null;st.style.transition='';if(!done){if(dx<8)tear();else st.style.transform=''}};st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up);
+  T.querySelector('.a').addEventListener('click',tear)})();
+if(cur()&&cur().state!=='want')now=null;
+head();list();
+</script><script src="../skin.js"></script></body></html>

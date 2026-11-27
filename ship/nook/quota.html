@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>窗外的树</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--paper:#fdf7e6;--ink:#3a2a1a;--soft:rgba(58,42,26,.7);--line:rgba(58,42,26,.18);--red:#a8322a;--navy:#2b4660}
+body[data-sky=night]{--bg:#3a2f2a;--paper:#3a3542;--ink:#efe3c8;--soft:rgba(239,227,200,.65);--line:rgba(239,227,200,.16)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
+.bar{flex:none;display:flex;align-items:center;height:calc(44px + env(safe-area-inset-top)*.7);padding:calc(env(safe-area-inset-top)*.7) 10px 0;background:var(--navy);color:#fdf3d8;border-bottom:3px solid #b08a4a}
+.bar button{border:0;background:rgba(253,243,216,.14);color:#fdf3d8;height:28px;padding:0 11px;border-radius:14px;font-size:12.5px;cursor:pointer}
+.bar b{flex:1;text-align:center;font-weight:400;font-size:17px;margin-right:62px}
+.body{flex:1;overflow-y:auto;padding:0 0 30px;-webkit-overflow-scrolling:touch;background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,235,190,.07) 0 2px,transparent 2px 9px,rgba(90,55,20,.06) 9px 10px,transparent 10px 23px),repeating-linear-gradient(180deg,rgba(80,48,16,.34) 0 1.5px,rgba(255,236,196,.2) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+.win{position:relative;width:min(100%,56vh);margin:0 auto;aspect-ratio:1;cursor:pointer}
+.glass{position:absolute;left:49.4%;top:47.95%;width:63.6%;height:65.5%;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;background:#b9c9c4}
+.glass img{position:absolute;left:-4%;top:-4%;width:108%;height:108%;object-fit:cover;opacity:0;will-change:opacity,transform}
+.glass canvas{position:absolute;inset:0;width:100%;height:100%}
+.glass::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 26px rgba(20,30,40,.5),inset 8px 10px 30px rgba(255,255,255,.12);pointer-events:none}
+.frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block}
+.say{margin:2px 18px 0;text-align:center;font-size:20px;line-height:1.5}
+.say small{display:block;font-size:13px;color:var(--soft);margin-top:1px}
+.sec{margin:14px 14px 0;background:var(--paper);border-radius:6px;padding:12px 14px;box-shadow:0 3px 8px rgba(50,28,8,.25)}
+.sec h3{margin:0 0 8px;font-weight:400;font-size:13px;color:var(--soft);display:flex;justify-content:space-between;align-items:center}
+.twig{position:relative;height:30px}
+.twig::before{content:"";position:absolute;left:0;right:0;top:14px;height:3px;border-radius:2px;background:#7a5a36}
+.twig i{position:absolute;top:15px;width:11px;height:7px;border-radius:0 80% 0 80%;background:var(--c,#7fa56a);transform-origin:0 50%;transform:rotate(var(--r));transition:opacity .6s,transform .6s}
+.twig i.off{opacity:0;transform:rotate(var(--r)) translateY(14px)}
+.note{font-size:15px;line-height:1.7}
+.note small{display:block;font-size:12px;color:var(--soft);font-family:-apple-system,"PingFang SC",sans-serif;margin-top:4px}
+.demo label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft);padding:4px 0 0}
+.demo label i{font-style:normal;width:46px}
+.demo input{flex:1;accent-color:#2b4660;height:22px}
+.demo button{margin-top:8px;border:1.5px solid var(--line);background:transparent;border-radius:15px;height:30px;padding:0 12px;font-size:13px;cursor:pointer}
+.tip{font-size:12px;margin:8px 16px 0;text-align:center;color:rgba(58,42,26,0.88)}
+body[data-sky=night] .tip{color:rgba(239,227,200,0.94)}
+
+/* 顶上不要深蓝横栏：只留小返回钮，名字是一行手写字；卡片用旧纸，不用白底 */
+.bar{background:none!important;border:0!important;color:#3a2a1a!important;height:calc(46px + env(safe-area-inset-top)*.7)!important}
+.bar button{background:rgba(255,250,238,.92)!important;color:#3a2a1a!important;height:30px!important;border-radius:15px!important;box-shadow:0 1px 4px rgba(40,30,10,.3);font-weight:500}
+.bar b{font-size:17px!important;color:#3a2a1a!important;text-shadow:0 1px 0 rgba(255,240,205,.5)}
+:root{--paper:linear-gradient(rgba(250,242,222,.72),rgba(250,242,222,.72)),url(../../img/paper.webp) center/340px #efe0bb!important}
+body[data-sky=night]{--paper:linear-gradient(rgba(58,53,66,.9),rgba(58,53,66,.9)),url(../../img/paper.webp) center/340px #3a3542!important}
+body[data-sky=night] .bar b{color:#efe3c8!important;text-shadow:none}
+
+/* 上下文＝玻璃起雾：从窗框边上往里漫，中间最后才糊 */
+.fog{position:absolute;inset:0;z-index:4;border-radius:50%;pointer-events:none;opacity:.3;transition:opacity 1.2s ease;
+ background:radial-gradient(circle at 50% 50%,rgba(236,240,240,0) 22%,rgba(236,240,240,.55) 52%,rgba(240,243,243,.9) 72%),
+ radial-gradient(circle at 30% 70%,rgba(255,255,255,.35),rgba(255,255,255,0) 40%);backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px)}
+.ctx{font-size:15px;line-height:1.6;color:rgba(58,42,26,.9);padding:2px 2px 4px}
+</style></head><body>
+<div id="app">
+<div class="bar"><button id="back">‹ 回船上</button><b class="hand">窗外的树</b></div>
+<div class="body">
+  <div class="win" id="win">
+    <div class="glass" id="glass"><img alt=""><img alt=""><img alt=""><img alt=""><img alt=""><canvas id="cv"></canvas><i class="fog" id="fog"></i></div>
+    <img class="frame" src="img/win_frame.webp" alt="">
+  </div>
+  <div class="say hand" id="say"></div>
+  <div class="sec">
+    <h3><span>这一周</span><span id="wk"></span></h3>
+    <div class="twig" id="twig"></div>
+  </div>
+  <div class="sec">
+    <h3><span>这一扇窗</span><span id="cx"></span></h3>
+    <div class="ctx hand" id="ctx"></div>
+  </div>
+  <div class="sec">
+    <h3><span>照这棵树看</span></h3>
+    <div class="note hand" id="note"></div>
+  </div>
+  <div class="sec demo">
+    <h3><span>拖一下看树怎么变（演示用，接上以后读真的额度）</span></h3>
+    <label><i>这一轮</i><input type="range" min="0" max="100" id="r0"></label>
+    <label><i>这一周</i><input type="range" min="0" max="100" id="r1"></label>
+    <label><i>这一扇窗</i><input type="range" min="0" max="100" id="r2"></label>
+    <button id="turn">到点了，回满</button>
+  </div>
+  <div class="tip">这页的数都是演示</div>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
+try{document.body.dataset.sky=parent.document.body.dataset.sky||''}catch(e){}
+const night=document.body.dataset.sky==='night';
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+let q=LS.get('quota-now',null);
+if(!q||typeof q.left!=='number'){q={left:62,week:41,resetIn:250,weekDay:'周四早上'};LS.set('quota-now',q)}
+if(typeof q.ctx!=='number'){q.ctx=68;LS.set('quota-now',q)}
+
+const ST=['spring','summer','autumn','late','winter'];
+const imgs=[...document.querySelectorAll('.glass img')];imgs.forEach((im,i)=>im.src='img/tree_'+ST[i]+'.webp');
+const glass=$('#glass'),cv=$('#cv'),g=cv.getContext('2d');let W=0,H=0;
+function size(){const d=Math.min(2,devicePixelRatio||1);W=glass.clientWidth;H=glass.clientHeight;cv.width=W*d;cv.height=H*d;g.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',size);
+/* 额度 → 树在五张画里的位置（0 满树花 … 4 光枝）。每张停一段，中间慢慢化过去 */
+const pos=l=>{const p=(100-l)/100*4,i=Math.min(3,Math.floor(p)),f=p-i,s=Math.max(0,Math.min(1,(f-.3)/.4));return i+s*s*(3-2*s)};
+let cur=pos(q.left),bits=[],tLast=0;
+const KIND=[{c:['#f3d9dc','#f7e9ea','#eac4cb'],n:10,sz:3},{c:['#8fae7a'],n:0,sz:3},{c:['#d9a441','#c9812f','#e0b860'],n:14,sz:4},{c:['#b98a3c','#a8702c','#c9a257'],n:22,sz:4},{c:['#f6f7f8','#e8edf0'],n:26,sz:2.4}];
+function draw(ts){
+  const t=ts/1000,dt=Math.min(.05,t-tLast||.016);tLast=t;
+  const target=pos(q.left),moving=Math.abs(target-cur);cur+=(target-cur)*Math.min(1,dt*1.6);
+  const i=Math.min(3,Math.floor(cur)),f=cur-i,sway=Math.sin(t*.5)*.35;
+  imgs.forEach((im,k)=>{im.style.opacity=k===i?1:k===i+1?f:0;im.style.zIndex=k===i+1?2:1;im.style.transform=`translateX(${sway}%)`});
+  g.clearRect(0,0,W,H);
+  /* 飘的东西：花瓣、落叶、雪 */
+  const k=Math.round(cur),K=KIND[k],want=K.n+(moving>.02?18:0);
+  if(bits.length<want&&Math.random()<.25)bits.push({x:W*(.1+Math.random()*.7),y:k===4?-6:H*(.12+Math.random()*.3),vx:8+Math.random()*14,vy:(k===4?16:11)+Math.random()*14,r:Math.random()*6,s:K.sz*(.7+Math.random()*.7),c:K.c[Math.floor(Math.random()*K.c.length)],k,l:1});
+  bits=bits.filter(b=>{b.y+=b.vy*dt;b.x+=(b.vx+Math.sin(t*1.7+b.r)*16)*dt;b.r+=dt*2;if(b.y>H*.84)b.l-=dt*1.2;if(b.l<=0||b.x>W+10)return false;
+    g.save();g.translate(b.x,b.y);g.rotate(b.r);g.globalAlpha=b.l*.9;g.fillStyle=b.c;g.beginPath();
+    if(b.k===4)g.arc(0,0,b.s,0,7);else g.ellipse(0,0,b.s*1.5,b.s*.75*Math.abs(Math.cos(b.r*.7))+.6,0,0,7);
+    g.fill();g.restore();return true});
+  if(night){g.fillStyle='rgba(20,22,48,.4)';g.fillRect(0,0,W,H)}
+  requestAnimationFrame(draw)}
+
+function tm(m){const h=Math.floor(m/60),r=m%60;return h?(h+' 小时'+(r?' '+r+' 分':'')):r+' 分钟'}
+const WORD=l=>l>=88?'花开满了':l>=62?'叶子正绿':l>=38?'叶子黄了':l>=12?'只剩枝头几簇':l>0?'快落光了':'叶子落光了';
+function paint(){
+  const l=q.left,w=q.week;
+  $('#say').innerHTML=WORD(l)+(l>0?'，还剩 '+l+'%':'')+'<small>'+(l>=100?'刚回满':tm(q.resetIn)+'后回满，又是一树花')+'</small>';
+  $('#wk').textContent='还剩 '+w+'% · '+q.weekDay+'回满';
+  const col=w>=62?'#7fa56a':w>=38?'#d9a441':'#b98a3c',n=20,on=Math.round(w/100*n);let h='';
+  for(let i=0;i<n;i++)h+=`<i class="${i<on?'':'off'}" style="left:${3+i*4.7}%;--c:${col};--r:${i%2?-52:52}deg"></i>`;
+  $('#twig').innerHTML=h;
+  $('#note').innerHTML=(l<=0?'这一轮用完了，要等树再开花才能接着说。':l<12?'快见底了。长的事留到回满以后，这会儿说短的。':l<38?'不多了，聊天够，别让他一口气干大活。':l<62?'用掉一半上下，正常聊没问题。':'还多着，放心聊。')+(w<15?'这一周的也不多了，省着点。':'')+'<small>这句是按剩下多少算出来的提示，不是他说的话。</small>';
+  /* 上下文：聊得越久玻璃越起雾；雾满了＝该换一扇新窗（开新窗口） */
+  const c=q.ctx;$('#fog').style.opacity=((100-c)/100*.92).toFixed(2);
+  $('#cx').textContent='上下文还剩 '+c+'%';
+  $('#ctx').textContent=c>=60?'玻璃还清楚，这个窗口能接着聊很久。':c>=30?'窗边起了一圈雾，聊到后面他会开始记不全前面的话。':c>0?'雾快盖满了。换一扇新窗他会带上要紧的事接着聊。':'看不清了，该换一扇新窗了。';
+  $('#r0').value=l;$('#r1').value=w;$('#r2').value=c}
+$('#r0').oninput=e=>{q.left=+e.target.value;LS.set('quota-now',q);paint()};
+$('#r1').oninput=e=>{q.week=+e.target.value;LS.set('quota-now',q);paint()};
+$('#r2').oninput=e=>{q.ctx=+e.target.value;LS.set('quota-now',q);paint()};
+$('#turn').onclick=()=>{q.left=100;q.resetIn=300;LS.set('quota-now',q);paint()};
+$('#win').onclick=()=>{for(let i=0;i<12;i++){const K=KIND[Math.round(cur)];if(!K.n)break;bits.push({x:W*(.15+Math.random()*.6),y:H*(.15+Math.random()*.3),vx:10+Math.random()*20,vy:14+Math.random()*16,r:Math.random()*6,s:K.sz,c:K.c[0],k:Math.round(cur),l:1})}};
+size();paint();requestAnimationFrame(draw);
+</script></body></html>

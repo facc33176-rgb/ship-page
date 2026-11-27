@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>他读的书</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--ink:#3a2a1a;--soft:rgba(58,42,26,.7);--red:#a8322a;--navy:#2b4660;--card:linear-gradient(rgba(240,226,190,.55),rgba(240,226,190,.55)),url(../../img/paper.webp) center/340px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button,input{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden}
+body[data-sky=night] #app{filter:brightness(.82) saturate(.9)}
+.back{position:absolute;left:10px;top:calc(8px + env(safe-area-inset-top)*.7);height:30px;padding:0 12px;border:0;border-radius:15px;background:rgba(255,250,238,.92);color:#3a2a1a;font-size:12.5px;font-weight:500;box-shadow:0 1px 4px rgba(40,30,10,.3);cursor:pointer;z-index:9}
+.body{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:40px;background-color:var(--bg);background-image:repeating-linear-gradient(180deg,rgba(80,48,16,.3) 0 1.5px,rgba(255,236,196,.18) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+/* 屋里那一角：书架、落地灯、他的扶手椅 */
+.nook{position:relative;width:100%;aspect-ratio:620/296;background:url(../img/study.webp) center/cover no-repeat}
+.nook .glow{position:absolute;left:53.5%;top:26%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,214,130,.55),rgba(255,214,130,0));mix-blend-mode:screen;animation:lamp 3.8s ease-in-out infinite;pointer-events:none}
+@keyframes lamp{0%,100%{opacity:.65}45%{opacity:1}62%{opacity:.8}}
+.nook .steam{position:absolute;left:91.6%;top:44%;width:2px;height:9%;border-radius:2px;background:linear-gradient(transparent,rgba(255,255,255,.7));animation:steam 2.6s ease-in infinite;pointer-events:none}.nook .steam+.steam{left:93%;animation-delay:1.2s}
+@keyframes steam{0%{transform:translateY(40%) scaleY(.4);opacity:0}40%{opacity:.8}100%{transform:translateY(-90%) scaleX(2.2);opacity:0}}
+.nook button{position:absolute;border:0;background:none;cursor:pointer}
+.nook .hChair{left:55%;top:28%;width:33%;height:64%}.nook .hShelf{left:2%;top:4%;width:42%;height:86%}
+/* 这会儿摊在椅子上的那本 */
+.cur{position:relative;display:flex;gap:12px;align-items:center;margin:14px 14px 0;padding:0;border:0;background:none;text-align:left;width:calc(100% - 28px);cursor:pointer}
+.cur img{flex:none;width:112px;filter:drop-shadow(1px 4px 4px rgba(30,15,0,.4));transition:transform .25s}.cur:active img{transform:translateY(-3px) rotate(-2deg)}
+.cur div{flex:1;min-width:0}.cur small{display:block;font-size:12px;color:var(--soft)}
+.cur b{display:block;font-weight:400;font-size:19px;line-height:1.3;margin:1px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cur i{display:block;height:3px;border-radius:2px;background:rgba(58,36,14,.22);overflow:hidden;margin-top:6px}.cur i::after{content:"";display:block;height:100%;width:var(--w);background:var(--red)}
+.slip{position:relative;margin:10px 26px 0 40px;padding:9px 12px 8px;background:var(--card);font-size:15px;line-height:1.5;transform:rotate(-1.2deg);box-shadow:1px 3px 6px rgba(50,28,8,.25);cursor:pointer}
+.slip small{display:block;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft);margin-top:3px}
+/* 工具 */
+.tools{display:flex;gap:7px;align-items:center;margin:20px 14px 0}.tools>span{flex:1;font-size:12px;color:var(--soft)}
+.tools button,.chips button{border:1px solid rgba(58,36,14,.4);background:none;border-radius:14px;height:28px;padding:0 11px;font-size:12px;cursor:pointer;color:#3a240e;white-space:nowrap}
+.tools button.on,.chips button.on{background:#3a240e;color:#fdf3d8;border-color:#3a240e}
+.seek{margin:8px 14px 0}.seek input{width:100%;height:34px;border:0;border-radius:17px;background:var(--card);padding:0 14px;font-size:16px;outline:none;box-shadow:inset 0 1px 2px rgba(80,55,20,.25);-webkit-user-select:text;user-select:text}
+.chips{display:flex;gap:6px;margin-top:8px}
+/* 椅子边上的书堆：平放着一本压一本 */
+.pile{position:relative;margin:26px 0 0;padding:0 0 12px}
+.pile .lab{display:block;margin:0 0 8px 18px;font-size:16px;color:rgba(58,36,14,0.88);letter-spacing:.08em}.pile .lab em{font-style:normal;font-size:12px;opacity:.6;margin-left:6px}
+.pile::after{content:"";position:absolute;left:6%;right:6%;bottom:6px;height:10px;border-radius:50%;background:radial-gradient(closest-side,rgba(40,20,5,.35),transparent)}
+.bk{position:relative;display:block;height:var(--th);width:var(--len);margin:0 auto;border:0;padding:0;background:none;cursor:pointer;transform:translateX(var(--dx));transition:transform .3s cubic-bezier(.3,1.4,.5,1),opacity .3s;z-index:1;animation:lay .45s cubic-bezier(.2,.9,.3,1) backwards;animation-delay:calc(var(--i)*45ms)}
+@keyframes lay{from{transform:translate(var(--dx),-26px);opacity:0}}
+.bk::before{content:"";position:absolute;left:50%;top:50%;width:var(--th);height:var(--len);background:var(--img) center/100% 100% no-repeat;transform:translate(-50%,-50%) rotate(-90deg);filter:drop-shadow(-1px 0 1px rgba(30,15,0,.4))}
+.bk b{position:absolute;left:14%;right:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-weight:400;font-size:13.5px;color:var(--tc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 1px rgba(0,0,0,.25);letter-spacing:.06em}
+.bk.lt b{text-shadow:none}
+.bk:active,.bk.out{transform:translateX(calc(var(--dx) + 22px)) rotate(1.5deg);z-index:3}
+.bk .st{position:absolute;left:5%;top:50%;transform:translateY(-50%);font-style:normal;font-size:12px;color:#ffe08a;text-shadow:0 1px 1px rgba(0,0,0,.5)}
+.bk .nw{position:absolute;right:-5px;top:50%;width:26px;height:10px;margin-top:-5px;background:#b3261e;clip-path:polygon(0 0,100% 0,82% 50%,100% 100%,0 100%);box-shadow:0 1px 1px rgba(0,0,0,.3)}
+.bk.dim{opacity:.25}.bk.sel{filter:drop-shadow(0 0 3px #2b4660) drop-shadow(0 0 2px #2b4660)}
+.none{text-align:center;font-size:15px;color:var(--soft);padding:8px 0 4px}
+.tip{text-align:center;font-size:12px;color:var(--soft);margin:22px 20px 0;line-height:1.6}
+.demo{display:block;margin:10px auto 0;border:1px dashed rgba(58,36,14,.45);background:none;border-radius:14px;height:28px;padding:0 12px;font-size:12px;color:var(--soft);cursor:pointer}
+/* 多选条 */
+.mbar{position:absolute;left:0;right:0;bottom:0;z-index:12;display:none;gap:8px;align-items:center;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--navy);color:#fdf3d8;font-size:12.5px}.mbar.on{display:flex}.mbar i{flex:1}
+.mbar button{border:0;border-radius:14px;height:30px;padding:0 12px;font-size:12.5px;background:rgba(253,243,216,.16);color:#fdf3d8;cursor:pointer}.mbar button:disabled{opacity:.4}.mbar .del{background:var(--red)}
+/* 抽出来看：他的读后感 */
+.veil{position:absolute;inset:0;z-index:20;background:rgba(40,26,12,.6);opacity:0;pointer-events:none;transition:opacity .25s}.veil.on{opacity:1;pointer-events:auto}
+.det{position:absolute;left:0;right:0;bottom:0;max-height:88%;display:flex;flex-direction:column;background:var(--card);background-color:#efe0bb;border-top:3px solid #b08a4a;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .32s cubic-bezier(.3,1,.4,1)}.veil.on .det{transform:none}
+.dh{flex:none;display:flex;gap:12px;align-items:flex-end;padding:14px 16px 10px}
+.dh .sp{flex:none;width:var(--w);height:var(--h);background:var(--img) center/100% 100% no-repeat;filter:drop-shadow(2px 3px 3px rgba(30,15,0,.4));transform:rotate(-4deg)}
+.dh div{flex:1;min-width:0}.dh b{display:block;font-weight:400;font-size:20px;line-height:1.3}.dh span{font-size:12px;color:var(--soft)}
+.dh .x{flex:none;align-self:flex-start;border:0;background:none;font-size:13px;color:var(--soft);padding:4px 2px;cursor:pointer}
+.db{flex:1;overflow-y:auto;padding:0 16px 10px;-webkit-overflow-scrolling:touch}
+.db h4{margin:14px 0 6px;font-size:12px;font-weight:500;color:var(--soft);display:flex;justify-content:space-between}
+.quote{position:relative;margin:0;padding:2px 0 2px 14px;border-left:3px solid var(--red);font-size:17px;line-height:1.6}
+.rev{font-size:16.5px;line-height:1.75;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
+.mk{display:flex;gap:10px;font-size:15px;line-height:1.55;padding:5px 0;border-top:1px dashed rgba(58,36,14,.2)}.mk small{flex:none;width:52px;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft);padding-top:4px}
+.re{margin:6px 0 0 30px;padding:6px 10px;background:rgba(43,70,96,.12);border-radius:10px 10px 2px 10px;font-size:15px;line-height:1.5}.re small{display:block;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft)}
+.da{flex:none;display:flex;gap:8px;align-items:center;padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(58,36,14,.15)}
+.da input{flex:1;min-width:0;height:36px;border:0;border-radius:18px;background:rgba(255,250,235,.7);padding:0 14px;font-size:16px;outline:none;box-shadow:inset 0 1px 2px rgba(80,55,20,.25);-webkit-user-select:text;user-select:text}
+.da button{flex:none;border:0;border-radius:18px;height:36px;padding:0 13px;font-size:13px;cursor:pointer;background:rgba(58,36,14,.1)}.da .go{background:var(--navy);color:#fdf3d8}.da .on{color:var(--red)}
+.toast{position:absolute;left:50%;bottom:calc(60px + env(safe-area-inset-bottom));transform:translate(-50%,10px);background:#3a2a1a;color:#fdf7e6;font-size:12.5px;padding:7px 14px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;z-index:60;white-space:nowrap}.toast.on{opacity:1;transform:translate(-50%,0)}
+.body{background:#f1dfbc url(../../img/bg_bead.webp) 0 0/300px!important;background-attachment:local!important}
+</style></head>
+<body><div id="app">
+  <button class="back" id="back">‹ 回船上</button>
+  <div class="body" id="body"></div>
+  <div class="mbar" id="mbar"></div>
+  <div class="veil" id="veil"><div class="det" id="det"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),KEY='reads-1',D=864e5;
+const SP=[[51,127,0],[27,118,0],[39,125,0],[27,109,1],[38,119,0],[27,101,1],[46,132,0],[28,114,0],[27,105,0],[44,122,0]];
+const get=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?f:v}catch(e){return f}},set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800)};
+const fd=t=>{const d=new Date(t),n=new Date(),days=Math.round((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(d.getFullYear(),d.getMonth(),d.getDate()))/D);return days===0?'今天':days===1?'昨天':days<7?days+' 天前':(d.getMonth()+1)+' 月 '+d.getDate()+' 日'};
+function load(){let a=get(KEY);if(!a){const n=Date.now();a=[
+  {st:'ing',title:'（演示）他正在读的一本',author:'（演示）作者',pct:42,t:n-3*D,marks:[{t:n-2*36e5,x:'（演示）他读到一半随手记的一句，会夹在书里。'},{t:n-2*D,x:'（演示）更早记的一句。'}]},
+  {st:'done',title:'（演示）读完的第一本',author:'（演示）作者',t:n-20*D,doneT:n-2*D,quote:'（演示）他从书里划下来的一句。',rev:'（演示）他的读后感写在这里。\n可以分段，长一点也行。',marks:[{t:n-6*D,x:'（演示）路上随手记的。'}],fresh:1},
+  {st:'done',title:'（演示）读完的第二本',author:'（演示）作者',t:n-40*D,doneT:n-12*D,quote:'（演示）划下来的一句。',rev:'（演示）读后感。',marks:[],star:1},
+  {st:'done',title:'（演示）读完的第三本',author:'（演示）作者',t:n-70*D,doneT:n-33*D,quote:'',rev:'（演示）读后感。',marks:[]},
+  {st:'done',title:'（演示）更早读完的',author:'',t:n-120*D,doneT:n-80*D,quote:'',rev:'（演示）读后感。',marks:[]},
+  {st:'want',title:'（演示）他想读的一本',author:'（演示）作者',t:n-5*D,why:'（演示）他为什么想读。',marks:[]},
+  {st:'want',title:'（演示）排着队的另一本',author:'',t:n-9*D,why:'',marks:[]}
+ ].map((b,i)=>({id:i+1,re:[],...b}));set(KEY,a)}return a}
+let L=load(),q='',flt='all',seek=false,pick=false,sel=new Set(),cur=null;
+const save=()=>set(KEY,L);
+function spine(b){const k=b.id%SP.length,s=SP[k];return {k,s,len:Math.round(s[1]*2.0),th:Math.round(s[0]*.95)}}
+function draw(){const B=$('#body'),ing=L.filter(b=>b.st==='ing').sort((x,y)=>y.t-x.t),hit=b=>!q||b.title.includes(q)||(b.author||'').includes(q)||(b.rev||'').includes(q)||(b.quote||'').includes(q);
+  const ok=b=>flt==='all'||(flt==='star'&&b.star)||(flt==='fresh'&&b.fresh);let i=0;
+  const pile=(st,name,none)=>{const a=L.filter(b=>b.st===st&&ok(b)).sort((x,y)=>(y.doneT||y.t)-(x.doneT||x.t));const W=Math.min(480,innerWidth);
+    return `<div class="pile"><span class="lab hand">${name}<em>${a.length}</em></span>${a.length?a.map((b,j)=>{const {k,s,len,th}=spine(b),L2=Math.min(len,W-70),dx=((b.id*37%29)-14)+'px';return `<button class="bk${s[2]?' lt':''}${hit(b)?'':' dim'}${sel.has(b.id)?' sel':''}" data-id="${b.id}" style="--i:${i++};--len:${L2}px;--th:${th}px;--dx:${dx};--img:url(../../books/img/sp${k}.webp);--tc:${s[2]?'#3a2a1a':'#f3dfa6'}"><b class="hand">${esc(b.title.replace('（演示）',''))}</b>${b.star?'<em class="st">★</em>':''}${b.fresh?'<i class="nw"></i>':''}</button>`}).join(''):`<p class="none hand">${none}</p>`}</div>`};
+  const c=ing[0],m=c&&c.marks&&c.marks[0];
+  B.innerHTML=`<div class="nook"><i class="glow"></i><i class="steam"></i><i class="steam"></i><button class="hChair" id="hChair" aria-label="他正在读的"></button><button class="hShelf" id="hShelf" aria-label="他读完的"></button></div>
+    ${c?`<button class="cur" data-id="${c.id}"><img src="../../books/img/open.webp" alt=""><div><small>这会儿摊在椅子上 · 读到 ${c.pct||0}%</small><b class="hand">${esc(c.title)}</b><small>${esc(c.author||'')}${ing.length>1?' · 另外还开着 '+(ing.length-1)+' 本':''}</small><i style="--w:${c.pct||0}%"></i></div></button>${m?`<div class="slip hand" data-id="${c.id}">${esc(m.x)}<small>他夹在书里的 · ${fd(m.t)}</small></div>`:''}`:`<p class="none hand" style="margin-top:18px">椅子上这会儿没有摊着的书。</p>`}
+    <div class="tools"><span>${pick?'点书把它选上':'点一本，抽出来看他写了什么'}</span>${pick?'':`<button id="sk" class="${seek?'on':''}">找书</button>`}<button id="pk" class="${pick?'on':''}">${pick?'完成':'整理'}</button></div>
+    ${seek&&!pick?`<div class="seek"><input id="q" placeholder="搜书名、作者、他写过的话" value="${esc(q)}"><div class="chips">${[['all','全部'],['fresh','新写了读后感'],['star','你收藏的']].map(([k,n])=>`<button data-f="${k}" class="${flt===k?'on':''}">${n}</button>`).join('')}</div></div>`:''}
+    <div id="piles">${pile('done','读完的','还没有读完的书。')}${pile('want','排着队想读的','没有排着队的。')}</div>
+    <p class="tip">这里是他自己的书：他读到哪、划了哪句、读完写了什么。<br>你和他一起读的书在岸上的书店。</p><button class="demo" id="demo">他读完了一本（演示）</button>`;
+  B.querySelectorAll('.bk,.cur,.slip').forEach(e=>e.onclick=()=>{const id=+e.dataset.id;if(pick&&e.classList.contains('bk')){sel.has(id)?sel.delete(id):sel.add(id);e.classList.toggle('sel');bar();return}if(e.classList.contains('bk')){e.classList.add('out');setTimeout(()=>open(id),180)}else open(id)});
+  $('#hChair').onclick=()=>{if(c)open(c.id)};$('#hShelf').onclick=()=>$('#piles').scrollIntoView({behavior:'smooth'});
+  const sk=$('#sk');if(sk)sk.onclick=()=>{seek=!seek;if(!seek){q='';flt='all'}draw();if(seek){$('#q').focus()}};
+  const qi=$('#q');if(qi)qi.oninput=()=>{q=qi.value.trim();const p=qi.selectionStart,sc=B.scrollTop;draw();B.scrollTop=sc;const n=$('#q');n.focus();n.setSelectionRange(p,p)};
+  B.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>{flt=b.dataset.f;const sc=B.scrollTop;draw();B.scrollTop=sc});
+  $('#pk').onclick=()=>{pick=!pick;sel.clear();const sc=B.scrollTop;draw();B.scrollTop=sc};
+  $('#demo').onclick=()=>{const n=Date.now(),c=L.find(b=>b.st==='ing');if(c){c.st='done';c.doneT=n;c.pct=100;c.fresh=1;c.quote=c.quote||'（演示）他划下来的一句。';c.rev='（演示）他刚写好的读后感。'}const w=L.find(b=>b.st==='want');if(w){w.st='ing';w.pct=3;w.t=n}save();draw();toast(c?'他读完了一本，放到书堆最上面了':'没有在读的书了')};bar()}
+function bar(){const M=$('#mbar');M.classList.toggle('on',pick);if(!pick)return;const n=sel.size;
+  M.innerHTML=`<span>选了 ${n} 本</span><i></i><button id="bS" ${n?'':'disabled'}>收藏</button><button id="bU" ${n?'':'disabled'}>取消收藏</button><button id="bD" class="del" ${n?'':'disabled'}>收起来</button>`;
+  const done=()=>{save();sel.clear();pick=false;draw()};$('#bS').onclick=()=>{L.forEach(b=>{if(sel.has(b.id))b.star=1});done()};$('#bU').onclick=()=>{L.forEach(b=>{if(sel.has(b.id))b.star=0});done()};
+  $('#bD').onclick=e=>{const d=e.currentTarget;if(!d.dataset.s){d.dataset.s=1;d.textContent='确定收起 '+n+' 本？';return}L=L.filter(b=>!sel.has(b.id));done()}}
+function open(id){const b=L.find(x=>x.id===id);if(!b)return;cur=b;if(b.fresh){b.fresh=0;save()}paint();$('#veil').classList.add('on')}
+function paint(){const b=cur,{k,s}=spine(b),stt=b.st==='ing'?'在读 · '+(b.pct||0)+'%':b.st==='done'?fd(b.doneT||b.t)+'读完':'想读 · '+fd(b.t)+'放进来的';
+  $('#det').innerHTML=`<div class="dh"><i class="sp" style="--w:${s[0]}px;--h:${s[1]}px;--img:url(../../books/img/sp${k}.webp)"></i><div><b class="hand">${esc(b.title)}</b><span>${esc(b.author||'')}${b.author?' · ':''}${stt}</span></div><button class="x" id="dX">放回去</button></div>
+    <div class="db">${b.quote?`<h4><span>他划下来的一句</span></h4><p class="quote hand">${esc(b.quote)}</p>`:''}
+      ${b.st==='done'?`<h4><span>他的读后感</span></h4><div class="rev hand">${b.rev?esc(b.rev):'<span style="color:var(--soft);font-size:14px">他还没写。</span>'}</div>`:''}
+      ${b.st==='want'?`<h4><span>他为什么想读</span></h4><div class="rev hand">${b.why?esc(b.why):'<span style="color:var(--soft);font-size:14px">他没说。</span>'}</div>`:''}
+      ${b.marks&&b.marks.length?`<h4><span>${b.st==='ing'?'读到一半随手记的':'路上随手记的'}</span><span>${b.marks.length} 句</span></h4>${b.marks.map(m=>`<div class="mk hand"><small>${fd(m.t)}</small><span>${esc(m.x)}</span></div>`).join('')}`:b.st==='ing'?'<h4><span>读到一半随手记的</span></h4><div class="rev hand"><span style="color:var(--soft);font-size:14px">还没记什么。</span></div>':''}
+      ${(b.re||[]).map(r=>`<div class="re hand">${esc(r.x)}<small>你 · ${fd(r.t)}</small></div>`).join('')}</div>
+    <div class="da"><input id="rIn" class="hand" maxlength="60" placeholder="跟他说一句这本书"><button class="go" id="rGo">夹进去</button><button id="dS" class="${b.star?'on':''}">${b.star?'★':'☆'}</button></div>`;
+  $('#dX').onclick=shut;$('#dS').onclick=()=>{b.star=b.star?0:1;save();paint()};
+  const go=()=>{const v=$('#rIn').value.trim();if(!v)return;(b.re=b.re||[]).push({t:Date.now(),x:v});save();paint();const d=$('.db');d.scrollTop=d.scrollHeight;toast('夹进书里了')};$('#rGo').onclick=go;$('#rIn').onkeydown=e=>{if(e.key==='Enter')go()}}
+function shut(){$('#veil').classList.remove('on');const sc=$('#body').scrollTop;draw();$('#body').scrollTop=sc}
+$('#veil').addEventListener('click',e=>{if(e.target.id==='veil')shut()});
+try{document.body.dataset.sky=parent.document.body.dataset.sky||''}catch(e){}
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+draw();
+</script></body></html>

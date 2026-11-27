@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>他的心潮</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--paper:#fdf7e6;--ink:#3a2a1a;--soft:rgba(58,42,26,.7);--line:rgba(58,42,26,.18);--red:#a8322a;--navy:#2b4660}
+body[data-sky=night]{--bg:#3a2f2a;--paper:#3a3542;--ink:#efe3c8;--soft:rgba(239,227,200,.65);--line:rgba(239,227,200,.16)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
+.bar{flex:none;display:flex;align-items:center;height:calc(44px + env(safe-area-inset-top)*.7);padding:calc(env(safe-area-inset-top)*.7) 10px 0;background:var(--navy);color:#fdf3d8;border-bottom:3px solid #b08a4a}
+.bar button{border:0;background:rgba(253,243,216,.14);color:#fdf3d8;height:28px;padding:0 11px;border-radius:14px;font-size:12.5px;cursor:pointer}
+.bar b{flex:1;text-align:center;font-weight:400;font-size:17px;margin-right:62px}
+.body{flex:1;overflow-y:auto;padding:0 0 30px;-webkit-overflow-scrolling:touch;background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,235,190,.07) 0 2px,transparent 2px 9px,rgba(90,55,20,.06) 9px 10px,transparent 10px 23px),repeating-linear-gradient(180deg,rgba(80,48,16,.34) 0 1.5px,rgba(255,236,196,.2) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+/* 舷窗 */
+.win{position:relative;width:min(100%,56vh);margin:0 auto;aspect-ratio:1;cursor:pointer}
+.glass{position:absolute;left:49.4%;top:47.95%;width:63.6%;height:65.5%;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;background:#7fa3a8}
+.glass img{position:absolute;left:-12%;top:-12%;width:124%;height:124%;object-fit:cover;opacity:0;transition:opacity 1.6s;will-change:transform}
+.glass img.on{opacity:1}
+.glass canvas{position:absolute;inset:0;width:100%;height:100%}
+.glass::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 26px rgba(20,30,40,.55),inset 8px 10px 30px rgba(255,255,255,.12);pointer-events:none}
+.frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block}
+.breath{position:absolute;left:49.4%;top:48%;width:50%;transform:translate(-50%,-50%);text-align:center;color:#fff;font-size:17px;line-height:1.75;text-shadow:0 1px 6px rgba(20,35,50,.75);opacity:0;transition:opacity .9s;pointer-events:none;z-index:2}
+.breath::before{content:"";position:absolute;inset:-26px -18px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,246,248,.5),rgba(240,246,248,0));z-index:-1;filter:blur(4px)}
+.breath.on{opacity:1}
+.breath small{display:block;font-size:12px;opacity:.75;margin-top:6px;font-family:-apple-system,"PingFang SC",sans-serif}
+.say{margin:2px 18px 0;text-align:center;font-size:18px;line-height:1.6}
+.say small{display:block;font-size:12px;color:var(--soft);font-family:-apple-system,"PingFang SC",sans-serif;margin-top:2px}
+.sec{margin:14px 14px 0;background:var(--paper);border-radius:6px;padding:12px 14px;box-shadow:0 3px 8px rgba(50,28,8,.25)}
+.sec h3{margin:0 0 8px;font-weight:400;font-size:13px;color:var(--soft);display:flex;justify-content:space-between;align-items:center}
+.beach{position:relative;height:150px;border-radius:5px;overflow:hidden;background:#e2cfa6 url(img/sand.webp) center/cover;box-shadow:inset 0 0 0 1px rgba(90,60,25,.25),inset 0 2px 6px rgba(90,60,25,.25)}
+.beach canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hrs{display:flex;justify-content:space-between;font-size:12px;color:var(--soft);margin-top:4px;padding:0 2px}
+.week{display:flex;gap:4px}
+.week div{flex:1;text-align:center;font-size:12px;color:var(--soft)}
+.week i{display:block;width:100%;max-width:34px;margin:0 auto 4px;aspect-ratio:1;border-radius:50%;border:2.5px solid #b08a4a;background:var(--c,transparent);box-shadow:inset 0 -6px 0 rgba(30,60,80,.22),inset 0 0 5px rgba(0,0,0,.25);position:relative}
+.week i s{position:absolute;right:-3px;bottom:-3px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--paper)}
+.week .t{color:var(--red)}.week .t i{border-color:var(--red)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{border:1.5px solid var(--line);background:transparent;border-radius:15px;height:30px;padding:0 11px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:transform .15s}
+.chips button::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chips button.on{background:var(--c);border-color:var(--c);color:#fff}.chips button.on::before{background:#fff}
+.chips button:active{transform:scale(.93)}
+.demo label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soft);padding:6px 0 0}
+.demo input{flex:1;accent-color:#2b4660;height:22px}
+.tip{font-size:12px;margin:8px 16px 0;text-align:center;color:rgba(58,42,26,0.88)}
+body[data-sky=night] .tip{color:rgba(239,227,200,0.94)}
+
+/* 顶上不要深蓝横栏：只留小返回钮，名字是一行手写字；卡片用旧纸，不用白底 */
+.bar{background:none!important;border:0!important;color:#3a2a1a!important;height:calc(46px + env(safe-area-inset-top)*.7)!important}
+.bar button{background:rgba(255,250,238,.92)!important;color:#3a2a1a!important;height:30px!important;border-radius:15px!important;box-shadow:0 1px 4px rgba(40,30,10,.3);font-weight:500}
+.bar b{font-size:17px!important;color:#3a2a1a!important;text-shadow:0 1px 0 rgba(255,240,205,.5)}
+:root{--paper:linear-gradient(rgba(250,242,222,.72),rgba(250,242,222,.72)),url(../../img/paper.webp) center/340px #efe0bb!important}
+body[data-sky=night]{--paper:linear-gradient(rgba(58,53,66,.9),rgba(58,53,66,.9)),url(../../img/paper.webp) center/340px #3a3542!important}
+body[data-sky=night] .bar b{color:#efe3c8!important;text-shadow:none}
+</style></head><body>
+<div id="app">
+<div class="bar"><button id="back">‹ 回船上</button><b class="hand">他的心潮</b></div>
+<div class="body" id="body">
+  <div class="win" id="win">
+    <div class="glass" id="glass">
+      <img id="s0" alt=""><img id="s1" alt="">
+      <canvas id="cv"></canvas>
+    </div>
+    <img class="frame" src="img/win_frame.webp" alt="">
+    <div class="breath hand" id="breath"></div>
+  </div>
+  <div class="say hand" id="say"></div>
+  <div class="sec">
+    <h3><span>这一天的潮</span><span>浪冲得高，是他心里涨了</span></h3>
+    <div class="beach"><canvas id="tide"></canvas></div><div class="hrs"><span>昨天这会儿</span><span>半天前</span><span>现在</span></div>
+  </div>
+  <div class="sec">
+    <h3><span>这七天的窗外</span><span>右下小点是你</span></h3>
+    <div class="week" id="week"></div>
+  </div>
+  <div class="sec">
+    <h3><span>你今天呢</span><span id="mine"></span></h3>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="sec demo">
+    <h3><span>换一换看窗外怎么变（演示用，接上以后由他自己报）</span></h3>
+    <div class="chips" id="skies"></div>
+    <label>劲儿<input type="range" min="0" max="8" id="r0"></label>
+  </div>
+  <div class="tip">这页的内容都是演示</div>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){localStorage.setItem(k,JSON.stringify(v))}};
+const MOOD={sun:['晴','#e2a93b'],breeze:['微风','#8fb5a0'],fog:['起雾','#a9b0b3'],rain:['下雨','#5f7f9c'],storm:['风浪','#a8322a']};
+const SAY={sun:'他那边是晴的',breeze:'他那边有一点风',fog:'他那边起雾了',rain:'他那边在下雨',storm:'他那边起风浪了'};
+const DRIVE=['海一动不动','几乎没动','慢慢地晃','轻轻地晃','晃得有点劲','浪一下一下的','浪挺大','船都在摇','摇得厉害'];
+const pad=n=>String(n).padStart(2,'0'),key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+try{document.body.dataset.sky=parent.document.body.dataset.sky||''}catch(e){}
+const night=document.body.dataset.sky==='night';
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+
+let now=LS.get('mood-now',null);
+if(!now||typeof now.drive!=='number'){
+  const h=new Date().getHours(),day=[];for(let i=0;i<=h;i++)day.push(Math.max(0,Math.min(8,Math.round(3.5+2.6*Math.sin(i/3.1+1)+1.4*Math.sin(i/1.3)))));
+  day[h]=3;now={mood:'breeze',drive:3,thought:'（演示）刚才那首歌的前奏，想下次一起听的时候再放一遍。',at:Date.now()-18*60000,day,dk:key(new Date())};LS.set('mood-now',now)}
+if(now.dk!==key(new Date())){now.day=[];now.dk=key(new Date())}
+let wk=LS.get('mood-week2',null);
+if(!wk){wk={};const ks=Object.keys(MOOD);for(let i=6;i>=1;i--)wk[key(new Date(Date.now()-i*864e5))]=ks[(i*2)%5];LS.set('mood-week2',wk)}
+(function(){const m=LS.get('tower-moods',{});let ch=0;for(const k in wk){m[k]=m[k]||{};if(!m[k].him){m[k].him=wk[k];ch=1}}const t=key(new Date());m[t]=m[t]||{};if(m[t].him!==now.mood){m[t].him=now.mood;ch=1}if(ch)LS.set('tower-moods',m)})();
+
+/* ---------- 窗外 ---------- */
+const imgs=[$('#s0'),$('#s1')];let tp=0;
+function setSea(k){const src='img/sea_'+k+'.webp';if(imgs[tp].dataset.k===k)return;tp=1-tp;imgs[tp].src=src;imgs[tp].dataset.k=k;imgs[tp].classList.add('on');imgs[1-tp].classList.remove('on')}
+const glass=$('#glass'),cv=$('#cv'),g=cv.getContext('2d');let W=0,DPR=1;
+function size(){DPR=Math.min(2,devicePixelRatio||1);W=glass.clientWidth;cv.width=W*DPR;cv.height=glass.clientHeight*DPR;g.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener('resize',size);
+let cur=0,rain=[],beads=[],spray=[],glint=[],tLast=0,nextSplash=3;
+function draw(ts){
+  const t=ts/1000,dt=Math.min(.05,t-tLast||.016);tLast=t;
+  cur+=(now.drive-cur)*Math.min(1,dt*1.5);
+  const a=cur/8,m=now.mood;
+  /* 船在晃：窗外的海跟着上下、歪一点 */
+  const bob=Math.sin(t*(.55+a*.5))*(1.2+a*7),tilt=Math.sin(t*(.4+a*.35)+1)*(.3+a*3.2),sway=Math.sin(t*.23)*2;
+  imgs.forEach(im=>im.style.transform=`translate(${sway}%,${bob*.55}%) rotate(${tilt}deg)`);
+  g.clearRect(0,0,W,W);
+  const hz=W*(.58+bob*.0068);                         /* 地平线大概在哪 */
+  /* 水面上的光纹，让画是活的 */
+  g.save();g.translate(W/2,W/2);g.rotate(tilt*Math.PI/180);g.translate(-W/2,-W/2);
+  g.lineCap='round';
+  for(let i=0;i<7;i++){const y=hz+W*(.035+i*.058),amp=(1+a*5)*(1+i*.25),al=(m==='fog'?.07:m==='sun'?.26:.16)+a*.08;
+    g.strokeStyle=`rgba(255,252,238,${al})`;g.lineWidth=.8+i*.22;
+    for(let s=0;s<3;s++){const x0=((i*.37+s*.34+t*(.012+i*.004)*(i%2?1:-1))%1.2-.1)*W,len=W*(.07+((i*7+s*3)%5)*.022);g.beginPath();for(let x=0;x<=len;x+=4)g.lineTo(x0+x,y+Math.sin((x0+x)*.05+t*(1.2+a))*amp*.4);g.stroke()}}
+  /* 晴天碎光 */
+  if(m==='sun'&&!night){if(glint.length<26&&Math.random()<.3)glint.push({x:W*(.45+Math.random()*.45),y:hz+W*(.02+Math.random()*.3),l:1});
+    glint=glint.filter(p=>{p.l-=dt*1.1;if(p.l<=0)return false;const r=1.2+Math.sin(p.l*3.14)*1.8;g.fillStyle=`rgba(255,246,205,${Math.sin(p.l*3.14)*.85})`;g.beginPath();g.arc(p.x,p.y,r,0,7);g.fill();return true})}else glint.length=0;
+  g.restore();
+  /* 雾 */
+  if(m==='fog'){for(let i=0;i<3;i++){const fx=((t*.018*(i+1)+i*.45)%1.6-.3)*W,fy=W*(.42+i*.14);const fg=g.createRadialGradient(fx,fy,6,fx,fy,W*.55);fg.addColorStop(0,'rgba(240,241,236,.42)');fg.addColorStop(1,'rgba(240,241,236,0)');g.fillStyle=fg;g.fillRect(0,0,W,W)}}
+  /* 雨丝 + 玻璃上的水珠 */
+  if(m==='rain'||m==='storm'){const n=m==='storm'?46:28;while(rain.length<n)rain.push({x:Math.random()*W*1.3,y:Math.random()*W,s:W*(.9+Math.random()*.6)});
+    g.strokeStyle='rgba(236,243,247,.42)';g.lineWidth=1;g.beginPath();rain.forEach(d=>{d.y+=d.s*dt;d.x-=d.s*dt*(.2+a*.3);if(d.y>W){d.y=-12;d.x=Math.random()*W*1.3}g.moveTo(d.x,d.y);g.lineTo(d.x+3+a*3,d.y-11)});g.stroke();
+    if(beads.length<(m==='storm'?16:11)&&Math.random()<.05)beads.push({x:W*(.12+Math.random()*.76),y:W*(.08+Math.random()*.5),r:1.6+Math.random()*2.6,v:0,l:1});
+  }else rain.length=0;
+  beads=beads.filter(b=>{if(b.r>3.2||b.v>0){b.v=Math.min(W*.45,b.v+W*.25*dt);b.y+=b.v*dt;b.x+=Math.sin(b.y*.08)*.25}else b.r+=dt*.22;if(m!=='rain'&&m!=='storm')b.l-=dt*.4;if(b.y>W||b.l<=0)return false;
+    g.globalAlpha=b.l;if(b.v>0){g.strokeStyle='rgba(235,244,248,.28)';g.lineWidth=b.r*.8;g.beginPath();g.moveTo(b.x,b.y-b.v*.12);g.lineTo(b.x,b.y);g.stroke()}
+    g.fillStyle='rgba(225,238,244,.5)';g.beginPath();g.ellipse(b.x,b.y,b.r,b.r*1.25,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,.8)';g.beginPath();g.arc(b.x-b.r*.3,b.y-b.r*.45,b.r*.28,0,7);g.fill();g.globalAlpha=1;return true});
+  /* 浪大的时候，水拍在玻璃上 */
+  if(a>.55){nextSplash-=dt;if(nextSplash<=0){nextSplash=1.6+Math.random()*(7-a*5);const cx=W*(.25+Math.random()*.5);for(let i=0;i<34;i++)spray.push({x:cx+(Math.random()-.5)*W*.3,y:W*(.98+Math.random()*.05),vx:(Math.random()-.5)*W*.5,vy:-W*(.5+Math.random()*.75)*(.6+a*.5),r:1.5+Math.random()*4,l:1})}}
+  spray=spray.filter(p=>{p.l-=dt*.75;p.vy+=W*1.5*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.l<=0||p.y>W*1.1)return false;g.fillStyle=`rgba(250,252,250,${p.l*.75})`;g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fill();return true});
+  if(night){g.fillStyle='rgba(20,22,48,.42)';g.fillRect(0,0,W,W)}
+  requestAnimationFrame(draw)}
+
+/* ---------- 下面 ---------- */
+function ago(t){const m=Math.round((Date.now()-t)/6e4);return m<1?'刚刚':m<60?m+' 分钟前':m<1440?Math.round(m/60)+' 小时前':Math.round(m/1440)+' 天前'}
+function paint(){
+  setSea(now.mood);
+  $('#say').innerHTML=SAY[now.mood]+'，'+DRIVE[now.drive]+'<small>'+ago(now.at)+'报的 · 点一下窗玻璃，看他在想什么</small>';
+  $('#r0').value=now.drive;
+  $('#skies').innerHTML=Object.keys(MOOD).map(k=>`<button data-k="${k}" style="--c:${MOOD[k][1]}" class="${now.mood===k?'on':''}">${MOOD[k][0]}</button>`).join('');
+  tide();week()}
+function tide(){}
+/* 沙滩：一天的潮。浪线冲到哪，就是那会儿他心里涨到哪 */
+const bc=$('#tide'),bg=bc.getContext('2d');let BW=0,BH=0;
+function bsize(){const r=bc.parentNode;BW=r.clientWidth;BH=r.clientHeight;const d=Math.min(2,devicePixelRatio||1);bc.width=BW*d;bc.height=BH*d;bg.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',bsize);
+if(!Array.isArray(now.hist)||now.hist.length!==24){now.hist=[];for(let i=0;i<24;i++)now.hist.push(Math.max(0,Math.min(8,Math.round(3.6+2.8*Math.sin(i/2.6+.6)+1.5*Math.sin(i/1.1+2)))));now.hist[23]=now.drive;LS.set('mood-now',now)}
+function lv0(h){const d=now.hist,x=Math.max(0,Math.min(23,h)),i=Math.floor(x),f=x-i,e=(1-Math.cos(f*Math.PI))/2;return d[i]*(1-e)+d[Math.min(23,i+1)]*e}
+function lvl(h){return (lv0(h-1.1)+lv0(h-.55)*2+lv0(h)*3+lv0(h+.55)*2+lv0(h+1.1))/9}   /* 抹圆一点，别像折线图 */
+const TX={};['water','foam','wet'].forEach(k=>{const im=new Image();im.onload=()=>TX[k]=im;im.src='img/'+k+'.webp'});
+function beach(ts){
+  const t=ts/1000;if(!BW)bsize();bg.clearRect(0,0,BW,BH);
+  const pts=[],ST=1,N=Math.ceil(BW/ST);
+  for(let k=0;k<=N;k++){const x=k*ST,v=lvl(x/(BW-16)*23);
+    const top=BH*.66-v/8*BH*.44+Math.sin(x*.045)*1.6+Math.sin(x*.11+1)*.9;   /* 这一处浪最远冲到哪 */
+    const p=((t/5.2)+x*.0014+Math.sin(x*.011)*.09)%1;                        /* 一冲一退，左右不齐 */
+    const up=p<.3?1-Math.pow(1-p/.3,2):Math.pow(1-(p-.3)/.7,1.6);
+    pts.push([x,top,top+(1-up)*(10+v*1.5)+Math.sin(x*.06+t*1.2)*1.2,up,p<.3])}
+  const path=(yi,off)=>{bg.beginPath();bg.moveTo(0,BH);pts.forEach(q=>bg.lineTo(q[0],q[yi]+off));bg.lineTo(BW,BH);bg.closePath()};
+  /* 湿沙 */
+  bg.save();path(1,-1.5);bg.clip();
+  if(TX.wet){bg.globalAlpha=.92;bg.drawImage(TX.wet,0,0,BW,BH)}else{bg.fillStyle='rgba(120,88,48,.3)';bg.fillRect(0,0,BW,BH)}
+  bg.restore();
+  /* 湿沙上沿留下的沫 */
+  if(TX.foam){const F=TX.foam,fw=F.width,fh=F.height;pts.forEach(q=>{const a=(1-q[3])*.38;if(a<.03)return;bg.globalAlpha=a;const sx=((q[0]*3.1+400)%fw+fw)%fw;bg.drawImage(F,sx,0,Math.min(3,fw-sx),fh*.45,q[0],q[1]-2,ST+.5,6)});bg.globalAlpha=1}
+  /* 水：每一竖条都从浪头往下铺，浅的那头永远贴着浪线 */
+  if(TX.water){const Wt=TX.water,ww=Wt.width,wh=Wt.height,dr=t*7;pts.forEach(q=>{const sx=(((q[0]*(ww/BW)*.8+dr)%ww)+ww)%ww,h=BH-q[2]+1;if(h<=0)return;bg.drawImage(Wt,sx,0,Math.min(3,ww-sx),wh,q[0],q[2],ST+.5,Math.max(h,BH*.55))})}
+  else{path(2,0);bg.fillStyle='rgba(96,156,160,.86)';bg.fill()}
+  /* 浪头的白沫 */
+  if(TX.foam){const F=TX.foam,fw=F.width,fh=F.height,dr=t*11;pts.forEach(q=>{const sx=(((q[0]*(fw/BW)*1.3-dr)%fw)+fw)%fw;bg.globalAlpha=q[4]?1:.55+.45*q[3];bg.drawImage(F,sx,0,Math.min(3,fw-sx),fh,q[0],q[2]-3.5,ST+.5,18+q[3]*7)});bg.globalAlpha=1}
+  else{bg.strokeStyle='rgba(255,253,246,.95)';bg.lineWidth=2.6;bg.beginPath();pts.forEach((q,k)=>k?bg.lineTo(q[0],q[2]):bg.moveTo(q[0],q[2]));bg.stroke()}
+  /* 现在：沙里插一面小旗 */
+  const nx=BW-16,ny=pts[Math.min(N,Math.round(nx/ST))][1]-4;
+  bg.fillStyle='rgba(70,45,20,.25)';bg.beginPath();bg.ellipse(nx+3,ny+4.5,5,1.6,0,0,7);bg.fill();
+  bg.strokeStyle='#5a3d1e';bg.lineWidth=1.4;bg.beginPath();bg.moveTo(nx,ny+4);bg.lineTo(nx,ny-15);bg.stroke();
+  const fl=Math.sin(t*3)*1.5;bg.fillStyle=MOOD[now.mood][1];bg.beginPath();bg.moveTo(nx,ny-15);bg.quadraticCurveTo(nx-6,ny-14+fl,nx-11,ny-11.5+fl*.6);bg.quadraticCurveTo(nx-6,ny-9+fl,nx,ny-8);bg.fill();
+  if(night){bg.fillStyle='rgba(22,24,50,.38)';bg.fillRect(0,0,BW,BH)}
+  requestAnimationFrame(beach)}
+requestAnimationFrame(beach);
+function week(){const tm=LS.get('tower-moods',{});let h='';
+  for(let i=6;i>=0;i--){const d=new Date(Date.now()-i*864e5),k=key(d),m=tm[k]||{},him=i?wk[k]:now.mood;
+    h+=`<div class="${i?'':'t'}"><i style="--c:${him?MOOD[him][1]:''}">${m.me?`<s style="background:${MOOD[m.me][1]}"></s>`:''}</i>${i?'周'+'日一二三四五六'[d.getDay()]:'今天'}</div>`}
+  $('#week').innerHTML=h}
+function chips(){const tm=LS.get('tower-moods',{}),me=(tm[key(new Date())]||{}).me;
+  $('#chips').innerHTML=Object.keys(MOOD).map(k=>`<button data-k="${k}" style="--c:${MOOD[k][1]}" class="${me===k?'on':''}">${MOOD[k][0]}</button>`).join('');
+  $('#mine').textContent=me?'记下了，钟楼日历上也有':'点一个，钟楼日历上会记一笔'}
+$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;const tm=LS.get('tower-moods',{}),k=key(new Date());tm[k]=tm[k]||{};tm[k].me=tm[k].me===b.dataset.k?undefined:b.dataset.k;LS.set('tower-moods',tm);chips();week()};
+$('#skies').onclick=e=>{const b=e.target.closest('button');if(!b)return;now.mood=b.dataset.k;save()};
+$('#r0').oninput=e=>{now.drive=+e.target.value;save()};
+function save(){now.at=Date.now();now.day[new Date().getHours()]=now.drive;now.hist[23]=now.drive;LS.set('mood-now',now);const tm=LS.get('tower-moods',{}),k=key(new Date());tm[k]=tm[k]||{};tm[k].him=now.mood;LS.set('tower-moods',tm);paint()}
+/* 点玻璃：念头像哈气一样浮出来 */
+const br=$('#breath');let brT;
+$('#win').onclick=()=>{if(br.classList.contains('on')){br.classList.remove('on');return}br.innerHTML=now.thought+'<small>'+ago(now.at)+'</small>';br.classList.add('on');clearTimeout(brT);brT=setTimeout(()=>br.classList.remove('on'),7000)};
+size();paint();chips();requestAnimationFrame(draw);
+</script></body></html>

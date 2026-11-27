@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>守则</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--ink:#3a2a1a;--soft:rgba(58,42,26,.72);--red:#a8322a;--navy:#2b4660;--card:linear-gradient(rgba(240,226,190,.55),rgba(240,226,190,.55)),url(../../img/paper.webp) center/340px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button,input{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden}
+.back{position:absolute;left:10px;top:calc(8px + env(safe-area-inset-top)*.7);height:30px;padding:0 12px;border:0;border-radius:15px;background:rgba(255,250,238,.92);color:#3a2a1a;font-size:12.5px;font-weight:500;box-shadow:0 1px 4px rgba(40,30,10,.3);cursor:pointer;z-index:9}
+.body{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 0 40px;background-color:#6b4a2c;background-image:repeating-linear-gradient(180deg,rgba(30,15,5,.4) 0 1.5px,rgba(255,220,170,.08) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+/* 舱里挂的一排灯：亮着=活着，一闪一闪=有点不对，灭了=连不上 */
+.say{margin:calc(50px + env(safe-area-inset-top)*.7) 16px 0;text-align:center;font-size:19px;color:#f3e2bb}
+.say small{display:block;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:rgba(243,226,187,0.94);margin-top:3px}
+.lamps{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 6px;padding:30px 10px 0;margin-top:10px}
+.lamps::before{content:"";position:absolute;left:-10px;right:-10px;top:6px;height:14px;background:url(../../note/img/rope.webp) left center/auto 100% repeat-x;filter:brightness(.8) drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+.lamp{position:relative;border:0;background:none;padding:0;cursor:pointer;text-align:center;color:#f3e2bb;transform-origin:50% -20px;animation:sway var(--s,5s) ease-in-out infinite;animation-delay:var(--d,0s);min-width:0}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+.lamp::before{content:"";position:absolute;left:50%;top:-26px;width:2px;height:30px;margin-left:-1px;background:#3a2a18}
+.lamp .gl{position:absolute;left:50%;top:38px;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(255,206,120,.5),rgba(255,206,120,0));mix-blend-mode:screen;pointer-events:none;animation:glow 3.4s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes glow{0%,100%{opacity:.7}50%{opacity:1}}
+.lamp img{position:relative;display:block;height:92px;margin:0 auto;filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}
+.lamp b{display:block;font-weight:400;font-size:15px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lamp small{display:block;font-size:12px;color:rgba(243,226,187,0.94);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lamp.warn .gl{animation:flick 1.3s steps(1) infinite}.lamp.warn img{animation:flicki 1.3s steps(1) infinite}
+@keyframes flick{0%,100%{opacity:.9}18%{opacity:.25}26%{opacity:.8}55%{opacity:.2}63%{opacity:.9}}
+@keyframes flicki{0%,100%{filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}18%,55%{filter:brightness(.65) saturate(.6) drop-shadow(0 4px 4px rgba(0,0,0,.4))}26%,63%{filter:drop-shadow(0 4px 4px rgba(0,0,0,.4))}}
+.lamp.warn small{color:#f0c46a}
+.lamp.off .gl{display:none}.lamp.off img{filter:grayscale(.85) brightness(.5) drop-shadow(0 4px 4px rgba(0,0,0,.4))}.lamp.off small{color:#e58a78}
+.lamp.chk img{animation:relight .9s ease both}@keyframes relight{0%{filter:brightness(.4)}60%{filter:brightness(1.5)}}
+/* 守则：钉在舱壁上的一张纸，一条就是一个钩子 */
+.sheet{position:relative;margin:34px 12px 0;padding:22px 14px 12px;background:var(--card);background-color:#efe0bb;box-shadow:2px 6px 14px rgba(0,0,0,.35);transform:rotate(-.5deg)}
+.sheet::before,.sheet::after{content:"";position:absolute;top:-9px;width:22px;height:25px;background:url(../../note/img/pin.webp) center/contain no-repeat}.sheet::before{left:16px}.sheet::after{right:16px}
+.sheet h2{margin:0 0 2px;text-align:center;font-weight:400;font-size:22px;letter-spacing:.3em;text-indent:.3em}
+.sheet .sub{text-align:center;font-size:12px;color:var(--soft);margin:0 0 6px}
+.tools{display:flex;gap:7px;justify-content:flex-end;margin:6px 0 4px}
+.tools button{border:1px solid rgba(58,36,14,.4);background:none;border-radius:14px;height:26px;padding:0 10px;font-size:12px;cursor:pointer;color:#3a240e}.tools button.on{background:#3a240e;color:#fdf3d8}
+.seek input{width:100%;height:32px;border:0;border-bottom:1.5px solid rgba(58,36,14,.3);background:none;padding:0 2px;font-size:16px;outline:none;margin-bottom:4px;-webkit-user-select:text;user-select:text}
+.rule{position:relative;display:flex;gap:8px;align-items:center;width:100%;border:0;border-top:1px dashed rgba(58,36,14,.22);background:none;padding:9px 0;text-align:left;cursor:pointer;transition:opacity .3s}
+.rule .no{flex:none;width:44px;font-size:13px;color:var(--soft)}
+.rule .tx{flex:1;min-width:0}.rule .tx b{display:block;font-weight:400;font-size:16.5px;line-height:1.35}.rule .tx small{display:block;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rule img{flex:none;width:34px;transition:transform .35s cubic-bezier(.3,1.5,.5,1),opacity .3s,filter .3s;filter:drop-shadow(0 2px 2px rgba(60,20,10,.35))}
+.rule.offr .tx b{text-decoration:line-through;text-decoration-color:rgba(58,36,14,.4);color:var(--soft)}.rule.offr img{opacity:.22;filter:grayscale(1);transform:scale(.8) rotate(-20deg)}
+.rule.dim{opacity:.25}.rule.sel{background:rgba(43,70,96,.12)}
+.none{text-align:center;font-size:15px;color:var(--soft);padding:12px 0}
+.tip{text-align:center;font-size:12px;color:rgba(243,226,187,0.94);margin:22px 20px 0;line-height:1.6}
+.demo{display:block;margin:10px auto 0;border:1px dashed rgba(243,226,187,.45);background:none;border-radius:14px;height:28px;padding:0 12px;font-size:12px;color:rgba(243,226,187,0.94);cursor:pointer}
+.mbar{position:absolute;left:0;right:0;bottom:0;z-index:12;display:none;gap:8px;align-items:center;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--navy);color:#fdf3d8;font-size:12.5px}.mbar.on{display:flex}.mbar i{flex:1}
+.mbar button{border:0;border-radius:14px;height:30px;padding:0 12px;font-size:12.5px;background:rgba(253,243,216,.16);color:#fdf3d8;cursor:pointer}.mbar button:disabled{opacity:.4}
+.veil{position:absolute;inset:0;z-index:20;background:rgba(20,12,6,.6);opacity:0;pointer-events:none;transition:opacity .25s}.veil.on{opacity:1;pointer-events:auto}
+.det{position:absolute;left:0;right:0;bottom:0;max-height:84%;display:flex;flex-direction:column;background:var(--card);background-color:#efe0bb;border-top:3px solid #b08a4a;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .32s cubic-bezier(.3,1,.4,1)}.veil.on .det{transform:none}
+.dh{flex:none;display:flex;gap:12px;align-items:center;padding:14px 16px 8px}.dh img{flex:none;height:64px}
+.dh div{flex:1;min-width:0}.dh b{display:block;font-weight:400;font-size:19px;line-height:1.3}.dh span{font-size:12px;color:var(--soft)}
+.dh .x{flex:none;align-self:flex-start;border:0;background:none;font-size:13px;color:var(--soft);padding:4px 2px;cursor:pointer}
+.db{flex:1;overflow-y:auto;padding:0 16px 10px}.db h4{margin:12px 0 4px;font-size:12px;font-weight:500;color:var(--soft)}.db p{margin:0;font-size:16px;line-height:1.65}
+.lg{display:flex;gap:10px;font-size:15px;line-height:1.55;padding:5px 0;border-top:1px dashed rgba(58,36,14,.2)}.lg small{flex:none;width:58px;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft);padding-top:4px}
+.da{flex:none;display:flex;gap:8px;justify-content:flex-end;padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(58,36,14,.15)}
+.da button{border:0;border-radius:18px;height:36px;padding:0 15px;font-size:13px;cursor:pointer;background:rgba(58,36,14,.1)}.da .go{background:var(--navy);color:#fdf3d8}.da .del{color:var(--red)}
+.ask{position:absolute;left:50%;top:26%;width:min(84%,330px);transform:translate(-50%,10px);background:var(--card);background-color:#efe0bb;padding:16px 16px 12px;box-shadow:3px 8px 18px rgba(0,0,0,.4);border-radius:3px;opacity:0;pointer-events:none;transition:.25s;z-index:30}.ask.on{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.ask small{display:block;font-size:12px;color:var(--soft);margin-bottom:8px}.ask input{width:100%;border:0;border-bottom:1.5px solid rgba(58,36,14,.35);background:none;font-size:18px;padding:4px 0;outline:none;-webkit-user-select:text;user-select:text}
+.ask div{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.ask button{border:0;border-radius:16px;height:32px;padding:0 14px;font-size:13px;background:rgba(58,36,14,.1);cursor:pointer}.ask .go{background:var(--navy);color:#fdf3d8}
+.toast{position:absolute;left:50%;bottom:calc(60px + env(safe-area-inset-bottom));transform:translate(-50%,10px);background:#f3e2bb;color:#3a2a1a;font-size:12.5px;padding:7px 14px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;z-index:60;white-space:nowrap}.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* 动效减法：常驻循环每屏最多三样，挂着的东西改成手碰到、滑动带到才晃（fx.js） */
+.lamp{animation:none}
+</style></head>
+<body><div id="app">
+  <button class="back" id="back">‹ 回船上</button>
+  <div class="body" id="body"></div>
+  <div class="mbar" id="mbar"></div>
+  <div class="veil" id="veil"><div class="det" id="det"></div></div>
+  <div class="ask" id="ask"><small>给这一条换个叫法</small><input id="aIn" class="hand" maxlength="24"><div><button id="aNo">算了</button><button class="go" id="aYes">改好了</button></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),M=6e4,H=36e5,D=864e5,LAMP='../../books/img/pr5.webp',SEAL='../../post/img/seal.webp',NUM='一二三四五六七八九十';
+const get=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?f:v}catch(e){return f}},set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800)};
+const ago=t=>{const d=Date.now()-t;return d<M?'刚刚':d<H?Math.floor(d/M)+' 分钟前':d<D?Math.floor(d/H)+' 小时前':Math.floor(d/D)+' 天前'};
+const no=i=>'第'+(i<10?NUM[i]:i<19?'十'+NUM[i-10]:i+1)+'条';
+function load(){let a=get('rules-1');if(!a){const n=Date.now();a={chk:n-3*M,
+  sv:[{id:1,name:'后端',st:'ok',say:'（演示）回得很快',info:'（演示）这盏灯是什么、它灭了会怎样，接上后端以后写在这里。',log:[{t:n-3*M,x:'（演示）查过，亮着。'}]},
+      {id:2,name:'记忆库',st:'ok',say:'（演示）正常',info:'（演示）说明。',log:[{t:n-3*M,x:'（演示）查过，亮着。'}]},
+      {id:3,name:'定时任务',st:'ok',say:'（演示）都按时跑了',info:'（演示）说明。',log:[{t:n-3*M,x:'（演示）查过，亮着。'}]},
+      {id:4,name:'备份',st:'warn',say:'（演示）上次是 3 天前',info:'（演示）说明。',log:[{t:n-3*M,x:'（演示）有点久没备份了。'},{t:n-3*D,x:'（演示）备份成功。'}]},
+      {id:5,name:'声音',st:'off',say:'（演示）连不上',info:'（演示）说明。',log:[{t:n-3*M,x:'（演示）没连上。'},{t:n-2*H,x:'（演示）还亮着。'}]}],
+  hk:[{id:1,name:'（演示）第一个钩子',when:'（演示）每次说完话以后',what:'（演示）这个钩子做什么，写在这里。',on:1,last:n-10*M,n:128},
+      {id:2,name:'（演示）第二个钩子',when:'（演示）每天夜里',what:'（演示）说明。',on:1,last:n-9*H,n:31},
+      {id:3,name:'（演示）第三个钩子',when:'（演示）开新窗口的时候',what:'（演示）说明。',on:1,last:n-2*D,n:12},
+      {id:4,name:'（演示）停用着的一个',when:'（演示）收到来信时',what:'（演示）说明。',on:0,last:n-20*D,n:4}]};set('rules-1',a)}return a}
+let S=load(),q='',seek=false,pick=false,sel=new Set(),chk=false;const save=()=>set('rules-1',S);
+const ST={ok:'亮着',warn:'一闪一闪',off:'灭了'};
+function draw(){const B=$('#body'),ok=S.sv.filter(s=>s.st==='ok').length,bad=S.sv.filter(s=>s.st==='off'),wr=S.sv.filter(s=>s.st==='warn'),hit=h=>!q||h.name.includes(q)||h.when.includes(q)||h.what.includes(q);
+  const line=bad.length?`${bad.map(s=>s.name).join('、')}的灯灭了`:wr.length?`${wr.map(s=>s.name).join('、')}的灯在闪，别的都亮着`:'灯都亮着，船上一切正常';
+  B.innerHTML=`<p class="say hand">${esc(line)}<small>${S.sv.length} 盏里亮着 ${ok} 盏 · ${ago(S.chk)}巡过一遍</small></p>
+    <div class="lamps">${S.sv.map((s,i)=>`<button class="lamp ${s.st==='ok'?'':s.st}${chk?' chk':''}" data-id="${s.id}" style="--s:${4.6+i%3*.6}s;--d:${-i*.8}s"><i class="gl"></i><img src="${LAMP}" alt=""><b class="hand">${esc(s.name)}</b><small>${esc(s.say)}</small></button>`).join('')}</div>
+    <div class="sheet"><h2 class="hand">守则</h2><p class="sub">一条就是他身上的一个钩子 · 盖着火漆的在用 · ${S.hk.filter(h=>h.on).length} / ${S.hk.length}</p>
+      <div class="tools">${pick?'':`<button id="sk" class="${seek?'on':''}">找</button>`}<button id="pk" class="${pick?'on':''}">${pick?'完成':'整理'}</button></div>
+      ${seek&&!pick?`<div class="seek"><input id="q" class="hand" placeholder="搜哪一条" value="${esc(q)}"></div>`:''}
+      ${S.hk.map((h,i)=>`<button class="rule${h.on?'':' offr'}${hit(h)?'':' dim'}${sel.has(h.id)?' sel':''}" data-id="${h.id}"><span class="no hand">${no(i)}</span><span class="tx"><b class="hand">${esc(h.name)}</b><small>${esc(h.when)} · ${h.on?'上次 '+ago(h.last):'停着'}</small></span><img src="${SEAL}" alt="${h.on?'在用':'停用'}"></button>`).join('')||'<p class="none hand">还没有守则。</p>'}</div>
+    <p class="tip">灯是后端各处是不是还活着；守则是他每次做事前后会自动跑的那些钩子。<br>点一盏灯或一条守则看细的。</p><button class="demo" id="demo">再巡一遍（演示）</button>`;chk=false;
+  B.querySelectorAll('.lamp').forEach(e=>e.onclick=()=>openSv(+e.dataset.id));
+  B.querySelectorAll('.rule').forEach(e=>e.onclick=()=>{const id=+e.dataset.id;if(pick){sel.has(id)?sel.delete(id):sel.add(id);e.classList.toggle('sel');bar();return}openHk(id)});
+  const keep=f=>{const sc=B.scrollTop;f();draw();B.scrollTop=sc};
+  const sk=$('#sk');if(sk)sk.onclick=()=>keep(()=>{seek=!seek;if(!seek)q=''});if(seek&&!pick&&document.activeElement.id!=='q'&&q==='')setTimeout(()=>{const n=$('#q');n&&n.focus({preventScroll:true})},30);
+  const qi=$('#q');if(qi)qi.oninput=()=>{q=qi.value.trim();const p=qi.selectionStart;keep(()=>{});const n=$('#q');n.focus({preventScroll:true});n.setSelectionRange(p,p)};
+  $('#pk').onclick=()=>keep(()=>{pick=!pick;sel.clear()});
+  $('#demo').onclick=()=>{const n=Date.now();S.chk=n;S.sv.forEach(s=>{if(s.st==='off'){s.st='ok';s.say='（演示）又连上了';s.log.unshift({t:n,x:'（演示）重新亮了。'})}else if(s.st==='warn'){s.st='ok';s.say='（演示）刚备份过';s.log.unshift({t:n,x:'（演示）好了。'})}else s.log.unshift({t:n,x:'（演示）查过，亮着。'});s.log=s.log.slice(0,8)});save();chk=true;draw();toast('巡了一遍')};bar()}
+function bar(){const Mb=$('#mbar');Mb.classList.toggle('on',pick);if(!pick)return;const n=sel.size;
+  Mb.innerHTML=`<span>选了 ${n} 条</span><i></i><button id="bOn" ${n?'':'disabled'}>盖上火漆（启用）</button><button id="bOff" ${n?'':'disabled'}>揭掉（停用）</button>`;
+  const f=v=>()=>{S.hk.forEach(h=>{if(sel.has(h.id))h.on=v});save();sel.clear();pick=false;const sc=$('#body').scrollTop;draw();$('#body').scrollTop=sc};$('#bOn').onclick=f(1);$('#bOff').onclick=f(0)}
+function openSv(id){const s=S.sv.find(x=>x.id===id);if(!s)return;
+  $('#det').innerHTML=`<div class="dh"><img src="${LAMP}" alt="" style="${s.st==='off'?'filter:grayscale(.85) brightness(.55)':''}"><div><b class="hand">${esc(s.name)}</b><span>${ST[s.st]} · ${esc(s.say)}</span></div><button class="x" id="dX">放回去</button></div>
+    <div class="db"><h4>这盏灯管什么</h4><p class="hand">${esc(s.info)}</p><h4>最近几次巡查</h4>${s.log.map(l=>`<div class="lg hand"><small>${ago(l.t)}</small><span>${esc(l.x)}</span></div>`).join('')}</div>
+    <div class="da"><button class="go" id="dChk">再查一次这盏（演示）</button></div>`;
+  $('#dX').onclick=shut;$('#dChk').onclick=()=>{s.log.unshift({t:Date.now(),x:'（演示）查过，'+ST[s.st]+'。'});s.log=s.log.slice(0,8);save();openSv(id);toast('查过了，'+ST[s.st])};$('#veil').classList.add('on')}
+function openHk(id){const h=S.hk.find(x=>x.id===id),i=S.hk.indexOf(h);if(!h)return;
+  $('#det').innerHTML=`<div class="dh"><img src="${SEAL}" alt="" style="${h.on?'':'filter:grayscale(1);opacity:.35'}"><div><b class="hand">${esc(h.name)}</b><span>${no(i)} · ${h.on?'在用':'停着'}</span></div><button class="x" id="dX">放回去</button></div>
+    <div class="db"><h4>什么时候跑</h4><p class="hand">${esc(h.when)}</p><h4>跑的时候做什么</h4><p class="hand">${esc(h.what)}</p><h4>跑过几次</h4><p class="hand">${h.n} 次 · 上次 ${ago(h.last)}</p></div>
+    <div class="da"><button id="dRen">改个叫法</button><button class="${h.on?'del':'go'}" id="dTog">${h.on?'揭掉火漆（停用）':'盖上火漆（启用）'}</button></div>`;
+  $('#dX').onclick=shut;$('#dTog').onclick=()=>{h.on=h.on?0:1;save();shut();toast(h.on?'盖上了，这条在用':'揭掉了，这条先停着')};
+  $('#dRen').onclick=()=>{$('#aIn').value=h.name;$('#ask').classList.add('on');setTimeout(()=>$('#aIn').focus(),60);$('#aYes').onclick=()=>{const v=$('#aIn').value.trim();if(!v)return;h.name=v;save();$('#ask').classList.remove('on');openHk(id)}};$('#veil').classList.add('on')}
+function shut(){$('#veil').classList.remove('on');const sc=$('#body').scrollTop;draw();$('#body').scrollTop=sc}
+$('#veil').addEventListener('click',e=>{if(e.target.id==='veil')shut()});$('#aNo').onclick=()=>$('#ask').classList.remove('on');
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+draw();
+</script><script src="../../fx.js"></script><script>Fx.hang('.lamp',{max:20,k:30,c:1.3});</script></body></html>

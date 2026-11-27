@@ -1,0 +1,81 @@
+/* 内页共用的底：木板墙 + 深蓝黄铜标签条，纸从木头上跳出来 */
+:root{--bg:#cfa56c;--soft:rgba(58,42,26,.7);--line:rgba(58,42,26,.18)}
+body[data-sky=night]{--bg:#3a2f2a;--soft:rgba(239,227,200,.65)}
+#app{background:var(--bg)}
+.body{background-color:var(--bg);background-image:repeating-linear-gradient(90deg,rgba(255,235,190,.07) 0 2px,transparent 2px 9px,rgba(90,55,20,.06) 9px 10px,transparent 10px 23px),repeating-linear-gradient(180deg,rgba(80,48,16,.34) 0 1.5px,rgba(255,236,196,.2) 1.5px 3px,transparent 3px 76px),linear-gradient(180deg,rgba(255,240,205,.14),rgba(110,65,22,.14));background-attachment:local}
+.head::after{height:14%!important;background:linear-gradient(transparent,rgba(40,28,14,.35))!important}
+@font-face{font-family:"Letter";src:url(post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+/* 标签不再是一条深蓝栏：压在头图下沿，每栋用它自己的东西；往下翻时头图和标签一起收上去 */
+.head{transition:margin-top .35s cubic-bezier(.3,.9,.3,1),filter .35s}
+.tabs{background:none!important;border:0!important;box-shadow:none!important;padding:0 14px!important;margin-top:-12px;gap:8px!important;justify-content:center;position:relative;z-index:3;height:44px;align-items:flex-start;pointer-events:none;transition:height .35s}
+.tabs button{pointer-events:auto;flex:0 1 30%!important;max-width:124px;height:34px!important;font-size:13.5px!important;font-family:"Letter","LetterAll","Kaiti SC","STKaiti",serif;font-weight:400!important;white-space:nowrap;position:relative;transition:transform .3s,filter .3s,color .3s,background .3s}
+.tabs button.on::after{display:none!important}
+.tabs em{position:absolute;right:-3px;top:-5px;margin:0!important;min-width:16px!important;height:16px!important;line-height:16px!important;font-size:10px!important;border-radius:8px!important;box-shadow:0 1px 2px rgba(0,0,0,.35);font-family:-apple-system,sans-serif;z-index:2}
+#app.tuck .head{margin-top:calc(var(--headh,120px) * -1 + 10px);filter:brightness(.5)}
+/* 邮局：分信格上的黄铜标签框，里面插一张纸签 */
+[data-room=post] .tabs button{background:linear-gradient(#f3e6c4,#e6d3a4)!important;color:rgba(70,45,20,0.88)!important;border:3px solid #a8853f!important;border-image:linear-gradient(160deg,#d9bd76,#8c6b2c 45%,#caa95f 70%,#7a5c24) 1!important;box-shadow:0 3px 5px rgba(40,25,8,.4),inset 0 1px 3px rgba(60,40,10,.35)}
+[data-room=post] .tabs button.on{color:#7a1f19!important;transform:translateY(2px);background:linear-gradient(#fff6dc,#f1e0b4)!important}
+[data-room=post]{--card:linear-gradient(rgba(255,244,214,.45),rgba(255,244,214,.45)),url(img/paper.webp) center/340px}
+/* 公告板：缆绳上串着的三角小旗 */
+[data-room=note] .tabs::before{content:"";position:absolute;left:0;right:0;top:10px;height:4px;background:repeating-linear-gradient(115deg,#a98552 0 4px,#7b5d33 4px 7px);border-radius:2px;box-shadow:0 2px 2px rgba(40,25,8,.35)}
+[data-room=note] .tabs button{height:40px!important;margin-top:11px;clip-path:polygon(0 0,100% 0,100% 62%,50% 100%,0 62%);padding-bottom:10px!important;color:rgba(255,248,230,0.94)!important;transform-origin:50% 0}
+[data-room=note] .tabs button:nth-child(1){background:#35546d!important}[data-room=note] .tabs button:nth-child(2){background:#9c3b30!important}[data-room=note] .tabs button:nth-child(3){background:#b88a35!important}
+[data-room=note] .tabs button.on{color:#fff!important;height:46px!important;animation:flap 3s ease-in-out infinite}
+[data-room=note] .tabs button:not(.on){filter:saturate(.6) brightness(.85)}
+@keyframes flap{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+[data-room=note] .tabs{height:58px}
+[data-room=note]{--card:linear-gradient(rgba(214,180,120,.35),rgba(214,180,120,.35)),url(img/paper.webp) center/340px}
+/* 钟楼：从上面垂下来的三条书签丝带 */
+[data-room=tower] .tabs button{height:40px!important;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);padding-bottom:9px!important;color:rgba(255,246,225,0.94)!important;flex-basis:26%!important;transform-origin:50% 0}
+[data-room=tower] .tabs button:nth-child(1){background:linear-gradient(90deg,#6d2f2a,#8c3f37 30%,#7a332d)!important}[data-room=tower] .tabs button:nth-child(2){background:linear-gradient(90deg,#2c475c,#3b5d76 30%,#30506a)!important}[data-room=tower] .tabs button:nth-child(3){background:linear-gradient(90deg,#5d5a2e,#7a763e 30%,#66632f)!important}
+[data-room=tower] .tabs button.on{height:52px!important;color:#fff!important}
+[data-room=tower] .tabs button:not(.on){filter:brightness(.8) saturate(.75)}
+[data-room=tower] .tabs{height:60px;margin-top:-4px}
+[data-room=tower]{--card:linear-gradient(rgba(226,222,200,.5),rgba(226,222,200,.5)),url(img/paper.webp) center/340px}
+/* 唱片行：唱片箱里的分隔卡，一张比一张矮一点 */
+[data-room=music] .tabs{align-items:flex-end;height:40px;margin-top:-18px;gap:0!important}
+[data-room=music] .tabs button{background:#e9d6aa url(img/paper.webp) center/260px!important;color:rgba(58,36,14,0.88)!important;border-radius:9px 9px 0 0;box-shadow:0 -2px 4px rgba(40,25,8,.3),inset 0 -6px 6px -6px rgba(60,35,10,.5);height:30px!important;margin:0 -3px}
+[data-room=music] .tabs button:nth-child(2){filter:brightness(.93) sepia(.15)}[data-room=music] .tabs button:nth-child(3){filter:brightness(.87) sepia(.25)}
+[data-room=music] .tabs button.on{height:38px!important;color:#2f1c08!important;filter:none;z-index:2;box-shadow:0 -3px 6px rgba(40,25,8,.4)}
+[data-room=music] .tabs button.on::before{content:"";position:absolute;left:18%;right:18%;bottom:5px;height:2px;background:#9c3b30;border-radius:1px}
+[data-room=music]{--card:linear-gradient(rgba(240,214,170,.4),rgba(240,214,170,.4)),url(img/paper.webp) center/340px}
+/* 书店：皮面书脊上的烫金书名签 */
+[data-room=books] .tabs button{background:linear-gradient(90deg,#3f5a48,#4f7059 40%,#3a5443)!important;color:rgba(232,205,140,0.94)!important;border-radius:3px;box-shadow:0 3px 5px rgba(30,20,8,.45),inset 0 0 0 1.5px rgba(40,60,45,.9),inset 0 0 0 3px rgba(214,180,105,.55);max-width:150px;flex-basis:40%!important;letter-spacing:.06em}
+[data-room=books] .tabs button:nth-child(2){background:linear-gradient(90deg,#6a2d2a,#84403a 40%,#622825)!important}
+[data-room=books] .tabs button.on{color:#f6dc98!important;transform:translateY(3px)}
+[data-room=books] .tabs button:not(.on){filter:brightness(.82) saturate(.8)}
+[data-room=books]{--card:linear-gradient(rgba(238,228,200,.5),rgba(238,228,200,.5)),url(img/paper.webp) center/340px}
+/* 小戏院：两张票根 */
+[data-room=cinema] .tabs button{background:radial-gradient(circle at 0 50%,transparent 5px,#efdcae 5.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 50%,transparent 5px,#efdcae 5.5px) right/51% 100% no-repeat!important;color:rgba(120,40,34,0.88)!important;filter:drop-shadow(0 3px 3px rgba(30,20,8,.4));border-top:2px dashed rgba(120,40,34,.0)}
+[data-room=cinema] .tabs button.on{color:#8a2018!important;transform:translateY(2px) rotate(-1.5deg)}
+[data-room=cinema] .tabs button:not(.on){filter:drop-shadow(0 3px 3px rgba(30,20,8,.4)) brightness(.84)}
+/* 纸：不再是白卡片，是发黄的旧纸，每栋偏一点自己的颜色 */
+:root{--card:#e7d4a9 url(img/paper.webp) center/340px}
+body[data-sky=night]{--card:#3a3542}
+.sum,.legend,.grp,.ann h4{color:rgba(58,36,14,0.88)!important}body[data-sky=night] .sum,body[data-sky=night] .legend,body[data-sky=night] .grp,body[data-sky=night] .ann h4{color:rgba(239,227,200,0.94)!important}
+.mh b,.pg b{color:#3a240e}.mh button,.pg button{color:rgba(58,36,14,0.88)!important}body[data-sky=night] .mh b,body[data-sky=night] .pg b{color:#efe3c8}
+.mh .today{border-color:rgba(58,36,14,.45)!important}
+
+/* 多选时底下：不要一整条栏。一句手写的话，加几截撕下来的牛皮胶带 */
+.mbar{position:absolute!important;left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;background:none!important;box-shadow:none!important;border:0!important;padding:0!important;gap:7px!important;align-items:center;flex-wrap:wrap;justify-content:flex-end;pointer-events:none}
+.mbar>*{pointer-events:auto}
+.mbar span{font-family:"Letter","LetterAll","Kaiti SC","STKaiti",serif;font-size:15px!important;color:#3a2a1a!important;background:url(note/img/tape.webp) center/100% 100% no-repeat;padding:6px 14px 7px;transform:rotate(-2deg);filter:drop-shadow(0 2px 3px rgba(40,22,6,.4))}
+.mbar i{flex:1}
+.mbar button{font-family:"Letter","LetterAll","Kaiti SC","STKaiti",serif!important;font-size:14.5px!important;color:#3a2a1a!important;background:url(note/img/tape.webp) center/100% 100% no-repeat!important;border:0!important;border-radius:0!important;height:auto!important;padding:7px 14px 8px!important;filter:drop-shadow(0 2px 3px rgba(40,22,6,.4));transition:transform .2s cubic-bezier(.3,1.5,.5,1),opacity .2s}
+.mbar button:nth-of-type(odd){transform:rotate(2deg)}.mbar button:nth-of-type(even){transform:rotate(-1.5deg) translateY(-3px)}
+.mbar button:active{transform:scale(.94)}
+.mbar button:disabled{opacity:.35!important}
+.mbar .del{color:#a8322a!important}
+
+/* 每处一种底，不再处处蜂蜜色横木板：底纹都是从画过的水彩里裁出来对拼的；上面罩一层很淡的暖米色，让冷色的天和暖色的木头、纸待在一个调子里 */
+[data-room=note] .body{background:linear-gradient(rgba(247,236,212,.42),rgba(247,236,212,.42)),url(img/bg_sky.webp) 0 0/420px #e9e8dc!important;background-attachment:local!important}
+[data-room=tower] .body{background:linear-gradient(rgba(255,250,238,.5),rgba(255,250,238,.5)),url(img/bg_bead.webp) 0 0/300px #f3e6c8!important;background-attachment:local!important}
+[data-room=music] .body{background:linear-gradient(rgba(226,188,176,.34),rgba(226,188,176,.34)),url(img/bg_bead.webp) 0 0/300px #ecd3c0!important;background-attachment:local!important}
+[data-room=note] #app,[data-room=tower] #app,[data-room=music] #app{background:none}
+/* 钟楼：底是护墙板，卡片就得是更白更实的纸，带一圈影子，才分得开 */
+[data-room=tower]{--card:linear-gradient(rgba(255,253,246,.86),rgba(255,253,246,.86)),url(img/paper.webp) center/340px!important}
+[data-room=tower] .grid,[data-room=tower] .day,[data-room=tower] .ann,[data-room=tower] .ev,[data-room=tower] .slip{box-shadow:0 1px 0 rgba(120,90,50,.35),0 4px 10px rgba(90,60,25,.22)!important}
+
+/* 统一角标：红底白字、18 高、12 号、一圈米白描边。全站同一个样子 */
+.tabs em{min-width:18px!important;height:18px!important;line-height:18px!important;border-radius:9px!important;padding:0 5px!important;background:#a8322a!important;color:#fff!important;font:600 12px/18px -apple-system,"PingFang SC","Helvetica Neue",sans-serif!important;font-style:normal!important;letter-spacing:0!important;text-align:center!important;box-shadow:0 0 0 1.5px #fbf3e2,0 1px 2px rgba(40,20,10,.35)!important;box-sizing:border-box!important}
+[data-room=note] .head .tabs .tp em{min-width:18px!important;height:18px!important;line-height:18px!important;border-radius:9px!important;padding:0 5px!important;background:#a8322a!important;color:#fff!important;font:600 12px/18px -apple-system,"PingFang SC","Helvetica Neue",sans-serif!important;font-style:normal!important;letter-spacing:0!important;text-align:center!important;box-shadow:0 0 0 1.5px #fbf3e2,0 1px 2px rgba(40,20,10,.35)!important;box-sizing:border-box!important}

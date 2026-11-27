@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>他手上的活</title>
+<style>
+@font-face{font-family:"Letter";src:url(../../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--bg:#cfa56c;--ink:#3a2a1a;--soft:rgba(58,42,26,.72);--red:#a8322a;--navy:#2b4660;--card:linear-gradient(rgba(240,226,190,.55),rgba(240,226,190,.55)),url(../../img/paper.webp) center/340px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+button,input{font-family:inherit;color:inherit}.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti","KaiTi",serif}
+#app{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden}
+body[data-sky=night] #app{filter:brightness(.82) saturate(.9)}
+.back{position:absolute;left:10px;top:calc(8px + env(safe-area-inset-top)*.7);height:30px;padding:0 12px;border:0;border-radius:15px;background:rgba(255,250,238,.92);color:#3a2a1a;font-size:12.5px;font-weight:500;box-shadow:0 1px 4px rgba(40,30,10,.3);cursor:pointer;z-index:9}
+.body{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 0 40px;background-color:var(--bg);background-image:repeating-linear-gradient(180deg,rgba(80,48,16,.3) 0 1.5px,rgba(255,236,196,.18) 1.5px 3px,transparent 3px 76px);background-attachment:local}
+.tools{display:flex;gap:7px;align-items:center;justify-content:flex-end;height:30px;margin:calc(8px + env(safe-area-inset-top)*.7) 12px 0}
+.tools button,.chips button{border:1px solid rgba(58,36,14,.4);background:none;border-radius:14px;height:28px;padding:0 11px;font-size:12px;cursor:pointer;color:#3a240e;white-space:nowrap}
+.tools button.on{background:#3a240e;color:#fdf3d8;border-color:#3a240e}.tools .add{background:var(--red);border-color:var(--red);color:#fff}
+.seek{margin:8px 12px 0}.seek input{width:100%;height:34px;border:0;border-radius:17px;background:var(--card);padding:0 14px;font-size:16px;outline:none;box-shadow:inset 0 1px 2px rgba(80,55,20,.25);-webkit-user-select:text;user-select:text}
+/* 吊杆：正吊在半空的，就是工作机这会儿手上的活 */
+.rig{position:relative;height:292px;margin-top:6px}
+.rig::before{content:"";position:absolute;left:-10px;right:-10px;top:14px;height:16px;background:url(../../note/img/rope.webp) left center/auto 100% repeat-x;filter:drop-shadow(0 2px 2px rgba(70,45,15,.35));z-index:3}
+.sling{position:absolute;top:22px;width:31%;left:var(--x);transform-origin:50% 0;animation:swing var(--s,5s) ease-in-out infinite;animation-delay:var(--d,0s);border:0;background:none;padding:0;cursor:pointer;text-align:center;color:inherit}
+@keyframes swing{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.2deg)}}
+.sling .rp{display:block;width:9px;height:var(--len);margin:0 auto -14px;background:url(../../tower/img/vrope.webp) center top/100% auto repeat-y;filter:drop-shadow(1px 0 1px rgba(60,35,10,.4));transition:height 1s cubic-bezier(.4,0,.2,1)}
+.sling img.kn{display:block;width:34%;margin:0 auto -9%;position:relative;z-index:2}
+.sling img.cr{display:block;width:100%;filter:drop-shadow(0 8px 6px rgba(40,22,6,.3))}
+.sling b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:400;font-size:14px;line-height:1.25;margin-top:5px}
+.sling small{display:block;font-size:12px;color:var(--soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sling.up{animation:hoist 1s cubic-bezier(.3,1.2,.5,1) both}@keyframes hoist{from{transform:translateY(240px);opacity:0}}
+.idle{position:absolute;left:0;right:0;top:120px;text-align:center;font-size:15px;color:var(--soft)}
+/* 码头上等着的、已经进舱的：三列，摆在木搁板上 */
+.sec{margin:18px 0 0}.sec .lab{display:block;margin:0 0 2px 16px;font-size:16px;color:rgba(58,36,14,0.88);letter-spacing:.08em}.sec .lab em{font-style:normal;font-size:12px;opacity:.6;margin-left:6px}
+.belt{position:relative;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:6px 0 10px;-webkit-mask:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}.belt::-webkit-scrollbar{display:none}
+.belt .run{display:flex;width:max-content}.belt .cell{flex:none;width:118px;margin:0 6px}
+.belt .cell::after{left:-7px!important;right:-7px!important;height:7px!important;border-radius:0!important;background:repeating-linear-gradient(90deg,#7a5026 0 22px,#5f3c1a 22px 25px)!important}
+.cell{position:relative;border:0;background:none;padding:0 0 8px;text-align:center;cursor:pointer;color:inherit;animation:in .4s cubic-bezier(.2,.9,.3,1) backwards;animation-delay:calc(var(--i)*40ms);transition:opacity .3s,transform .35s;min-width:0}
+@keyframes in{from{transform:translateY(-14px);opacity:0}}
+.cell::after{content:"";position:absolute;left:-5px;right:-5px;bottom:0;height:4px;border-radius:2px;background:linear-gradient(#8a5a2c,#6d4420);box-shadow:0 3px 5px rgba(40,20,5,.35)}
+.cell img.cr{display:block;width:84%;margin:0 auto;transition:transform .25s cubic-bezier(.3,1.4,.5,1)}.cell:active img.cr{transform:translateY(-4px) rotate(-2deg)}
+.cell img.stp{position:absolute;right:4%;top:2%;width:38%;transform:rotate(-14deg);opacity:.9;pointer-events:none}
+.cell b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:400;font-size:13.5px;line-height:1.25;margin-top:4px;min-height:2.5em}
+.cell small{display:block;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell.dim{opacity:.25}.cell.sel img.cr{filter:drop-shadow(0 0 3px #2b4660) drop-shadow(0 0 2px #2b4660)}.cell.gone{opacity:0;transform:translateY(26px) rotate(6deg)}
+.cell .me{position:absolute;right:14%;top:-4px;font-style:normal;font-size:17px;color:#b3261e;text-shadow:0 1px 1px rgba(60,10,5,.35);transform:rotate(12deg);animation:beat 1.6s ease-in-out infinite}@keyframes beat{0%,100%{transform:rotate(12deg) scale(1)}14%{transform:rotate(12deg) scale(1.18)}28%{transform:rotate(12deg) scale(1)}}
+.none{text-align:center;font-size:15px;color:var(--soft);padding:10px 0 4px;grid-column:1/-1}
+.more{display:block;margin:10px auto 0;border:0;background:none;font-size:12px;color:var(--soft);text-decoration:underline;cursor:pointer}
+.tip{text-align:center;font-size:12px;color:var(--soft);margin:24px 20px 0;line-height:1.6}
+.demo{display:block;margin:10px auto 0;border:1px dashed rgba(58,36,14,.45);background:none;border-radius:14px;height:28px;padding:0 12px;font-size:12px;color:var(--soft);cursor:pointer}
+.mbar{position:absolute;left:0;right:0;bottom:0;z-index:12;display:none;gap:8px;align-items:center;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--navy);color:#fdf3d8;font-size:12.5px}.mbar.on{display:flex}.mbar i{flex:1}
+.mbar button{border:0;border-radius:14px;height:30px;padding:0 12px;font-size:12.5px;background:rgba(253,243,216,.16);color:#fdf3d8;cursor:pointer}.mbar button:disabled{opacity:.4}.mbar .del{background:var(--red)}
+.veil{position:absolute;inset:0;z-index:20;background:rgba(40,26,12,.6);opacity:0;pointer-events:none;transition:opacity .25s}.veil.on{opacity:1;pointer-events:auto}
+.det{position:absolute;left:0;right:0;bottom:0;max-height:84%;display:flex;flex-direction:column;background:var(--card);background-color:#efe0bb;border-top:3px solid #b08a4a;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .32s cubic-bezier(.3,1,.4,1)}.veil.on .det{transform:none}
+.dh{flex:none;display:flex;gap:12px;align-items:center;padding:14px 16px 8px}.dh img{flex:none;width:76px}
+.dh div{flex:1;min-width:0}.dh b{display:block;font-weight:400;font-size:19px;line-height:1.3}.dh span{font-size:12px;color:var(--soft)}
+.dh .x{flex:none;align-self:flex-start;border:0;background:none;font-size:13px;color:var(--soft);padding:4px 2px;cursor:pointer}
+.db{flex:1;overflow-y:auto;padding:0 16px 10px}.db h4{margin:12px 0 6px;font-size:12px;font-weight:500;color:var(--soft)}
+.lg{display:flex;gap:10px;font-size:15px;line-height:1.55;padding:5px 0;border-top:1px dashed rgba(58,36,14,.2)}.lg small{flex:none;width:52px;font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;color:var(--soft);padding-top:4px}
+.da{flex:none;display:flex;gap:8px;justify-content:flex-end;padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(58,36,14,.15)}
+.da button{border:0;border-radius:18px;height:36px;padding:0 15px;font-size:13px;cursor:pointer;background:rgba(58,36,14,.1)}.da .go{background:var(--navy);color:#fdf3d8}.da .del{color:var(--red)}
+.ask{position:absolute;left:50%;top:26%;width:min(84%,330px);transform:translate(-50%,10px);background:var(--card);background-color:#efe0bb;padding:16px 16px 12px;box-shadow:3px 8px 18px rgba(0,0,0,.3);border-radius:3px;opacity:0;pointer-events:none;transition:.25s;z-index:30}.ask.on{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.ask small{display:block;font-size:12px;color:var(--soft);margin-bottom:8px}.ask input{width:100%;border:0;border-bottom:1.5px solid rgba(58,36,14,.35);background:none;font-size:18px;padding:4px 0;outline:none;-webkit-user-select:text;user-select:text}
+.ask div{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.ask button{border:0;border-radius:16px;height:32px;padding:0 14px;font-size:13px;background:rgba(58,36,14,.1);cursor:pointer}.ask .go{background:var(--navy);color:#fdf3d8}
+.toast{position:absolute;left:50%;bottom:calc(60px + env(safe-area-inset-bottom));transform:translate(-50%,10px);background:#3a2a1a;color:#fdf7e6;font-size:12.5px;padding:7px 14px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;z-index:60;white-space:nowrap}.toast.on{opacity:1;transform:translate(-50%,0)}
+.body{background:linear-gradient(rgba(247,236,212,.3),rgba(247,236,212,.3)),url(../../img/bg_mist.webp) 0 0/520px #e4e6d8!important;background-attachment:local!important}
+</style></head>
+<body><div id="app">
+  <button class="back" id="back">‹ 回船上</button>
+  <div class="body" id="body"></div>
+  <div class="mbar" id="mbar"></div>
+  <div class="veil" id="veil"><div class="det" id="det"></div></div>
+  <div class="ask" id="ask"><small>派一件活给他，先放在码头上排着</small><input id="aIn" class="hand" maxlength="30" placeholder="要他做什么"><div><button id="aNo">算了</button><button class="go" id="aYes">放到码头上</button></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),KEY='tasks-1',M=6e4,H=36e5,D=864e5,CR='../../music/img/crate.webp';
+const get=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?f:v}catch(e){return f}},set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800)};
+const ago=t=>{const d=Date.now()-t;return d<M?'刚刚':d<H?Math.floor(d/M)+' 分钟前':d<D?Math.floor(d/H)+' 小时前':Math.floor(d/D)+' 天前'};
+const dur=ms=>ms<H?Math.max(1,Math.round(ms/M))+' 分钟':(ms/H).toFixed(1).replace('.0','')+' 小时';
+function load(){let a=get(KEY);if(!a){const n=Date.now();a=[
+  {st:'run',title:'（演示）正在做的一件事',who:'（演示）工作机甲',t:n-2*H,startT:n-25*M,pct:60,log:[{t:n-25*M,x:'（演示）开始做了。'},{t:n-8*M,x:'（演示）做到一半时记的一句进展。'}]},
+  {st:'run',title:'（演示）另一台机器在做的',who:'（演示）工作机乙',t:n-3*H,startT:n-70*M,pct:20,log:[{t:n-70*M,x:'（演示）开始做了。'}]},
+  {st:'wait',title:'（演示）排着的一件事',who:'',t:n-40*M,log:[]},{st:'wait',title:'（演示）排在后面的',who:'',t:n-20*M,log:[]},{st:'wait',title:'（演示）你派给他的',who:'',t:n-5*M,by:'me',log:[]},
+  {st:'done',title:'（演示）做完的一件事',who:'（演示）工作机甲',t:n-6*H,startT:n-5*H,doneT:n-4*H,log:[{t:n-4*H,x:'（演示）做完时留的一句结果。'}]},
+  {st:'done',title:'（演示）昨天做完的',who:'（演示）工作机乙',t:n-30*H,startT:n-29*H,doneT:n-28*H,log:[]},{st:'done',title:'（演示）更早做完的',who:'（演示）工作机甲',t:n-3*D,startT:n-3*D,doneT:n-3*D+H,log:[]},
+  {st:'done',title:'（演示）没做成的一件',who:'（演示）工作机乙',t:n-4*D,startT:n-4*D,doneT:n-4*D+20*M,fail:1,log:[{t:n-4*D+20*M,x:'（演示）没做成的原因会写在这里。'}]}
+ ].map((b,i)=>({id:i+1,...b}));set(KEY,a)}return a}
+let L=load(),q='',seek=false,pick=false,sel=new Set(),cur=null,allDone=false,fresh=null;
+const save=()=>set(KEY,L);
+function draw(){const B=$('#body'),run=L.filter(t=>t.st==='run').sort((a,b)=>a.startT-b.startT),wait=L.filter(t=>t.st==='wait').sort((a,b)=>a.t-b.t),done=L.filter(t=>t.st==='done').sort((a,b)=>b.doneT-a.doneT),hit=t=>!q||t.title.includes(q)||(t.who||'').includes(q);
+  const xs=run.length===1?[34.5]:run.length===2?[12,57]:[2,34.5,67];let i=0;
+  const cell=(t,ex)=>`<button class="cell${hit(t)?'':' dim'}${sel.has(t.id)?' sel':''}" data-id="${t.id}" style="--i:${i++}"><img class="cr" src="${CR}" alt="">${ex}<b class="hand">${esc(t.title)}</b><small>${t.st==='done'?(t.fail?'没做成 · ':'')+ago(t.doneT):ago(t.t)+'放下的'}</small></button>`;
+  const belt=(k,a,none,dir)=>a.length?`<div class="belt" data-k="${k}" data-dir="${dir}"><div class="run">${a.join('')}${a.length>=3&&!pick&&!q?a.join('').replace(/class="cell/g,'aria-hidden="true" tabindex="-1" class="cell dup'):''}</div></div>`:`<p class="none hand">${none}</p>`;
+  B.innerHTML=`<div class="tools">${pick?'':`<button id="sk" class="${seek?'on':''}">找</button>`}<button id="pk" class="${pick?'on':''}">${pick?'完成':'整理'}</button>${pick?'':'<button class="add" id="add">＋ 派一件</button>'}</div>
+    ${seek&&!pick?`<div class="seek"><input id="q" placeholder="搜活的名字、哪台工作机" value="${esc(q)}"></div>`:''}
+    <div class="rig">${run.slice(0,3).map((t,j)=>`<button class="sling${hit(t)?'':' dim'}${t.id===fresh?' up':''}" data-id="${t.id}" style="--x:${xs[j]}%;--len:${Math.round(96-(t.pct||0)*.62)}px;--s:${4.4+j*.7}s;--d:${-j*1.3}s"><i class="rp"></i><img class="kn" src="../../tower/img/knot.webp" alt=""><img class="cr" src="${CR}" alt=""><b class="hand">${esc(t.title)}</b><small>${esc(t.who||'')}${t.who?' · ':''}做了 ${dur(Date.now()-t.startT)}</small></button>`).join('')||'<p class="idle hand">吊杆上空着，他这会儿手上没活。</p>'}</div>
+    ${run.length>3?`<p class="tip" style="margin-top:0">还有 ${run.length-3} 件也在做，吊杆上挂不下了。</p>`:''}
+    <div class="sec"><span class="lab hand">码头上等着的<em>${wait.length}</em></span>${belt('w',wait.map(t=>cell(t,t.by==='me'?'<i class="me" aria-label="你派的">♥</i>':'')),'码头上没有等着的。',1)}</div>
+    <div class="sec"><span class="lab hand">已经进舱的<em>${done.length}</em></span>${belt('d',done.map(t=>cell(t,t.fail?'':'<img class="stp" src="img/tk_stamp.webp" alt="">')),'还没有做完的。',-1)}</div>
+    <p class="tip">吊在半空的是工作机这会儿正在做的，绳子收得越短做得越多。<br>下面两条带子自己会慢慢走：等着的往吊杆这边送，做完的盖了章往舱里送。手指按住就停，可以自己拖。</p><button class="demo" id="demo">让时间走一步（演示）</button>`;fresh=null;
+  B.querySelectorAll('.cell,.sling').forEach(e=>e.onclick=()=>{const id=+e.dataset.id;if(pick){if(e.classList.contains('sling'))return toast('正在做的不能整理');sel.has(id)?sel.delete(id):sel.add(id);e.classList.toggle('sel');bar();return}open(id)});
+  const keep=f=>{const sc=B.scrollTop;f();draw();B.scrollTop=sc};
+  const sk=$('#sk');if(sk)sk.onclick=()=>{seek=!seek;if(!seek)q='';draw();if(seek)$('#q').focus()};
+  const qi=$('#q');if(qi)qi.oninput=()=>{q=qi.value.trim();const p=qi.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)};
+  $('#pk').onclick=()=>keep(()=>{pick=!pick;sel.clear()});const ad=$('#add');if(ad)ad.onclick=()=>{$('#aIn').value='';$('#ask').classList.add('on');setTimeout(()=>$('#aIn').focus(),60)};
+  belts();
+  $('#demo').onclick=()=>{const n=Date.now(),r=L.filter(t=>t.st==='run').sort((a,b)=>(b.pct||0)-(a.pct||0))[0];let msg='';
+    if(r&&(r.pct||0)>=60){r.st='done';r.doneT=n;r.pct=100;(r.log=r.log||[]).push({t:n,x:'（演示）做完了。'});msg='做完一件，盖章进舱了';const w=L.filter(t=>t.st==='wait').sort((a,b)=>a.t-b.t)[0];if(w){w.st='run';w.startT=n;w.pct=5;w.who=r.who;w.log=[{t:n,x:'（演示）开始做了。'}];fresh=w.id;msg+='，下一件吊起来了'}}
+    else if(r){L.filter(t=>t.st==='run').forEach(t=>t.pct=Math.min(95,(t.pct||0)+25));msg='又做了一截'}else{const w=L.filter(t=>t.st==='wait').sort((a,b)=>a.t-b.t)[0];if(w){w.st='run';w.startT=n;w.pct=5;w.who='（演示）工作机甲';fresh=w.id;msg='吊起来一件'}else msg='没有活了'}
+    save();draw();toast(msg)};bar()}
+/* 两条带子自己慢慢走；按住就停，可以拖；走到头接回开头 */
+let bx={},hold=0;function belts(){document.querySelectorAll('.belt').forEach(b=>{const k=b.dataset.k,run=b.firstElementChild;if(bx[k]!=null)b.scrollLeft=bx[k];b.onscroll=()=>{bx[k]=b.scrollLeft};['pointerdown','touchstart','wheel'].forEach(ev=>b.addEventListener(ev,()=>{hold=Date.now()+2600},{passive:true}))})}
+(function step(){requestAnimationFrame(step);if(pick||seek||Date.now()<hold||$('#veil').classList.contains('on'))return;document.querySelectorAll('.belt').forEach(b=>{const run=b.firstElementChild;if(!run.querySelector('.dup'))return;const half=run.scrollWidth/2,dir=+b.dataset.dir;let x=(b._x==null?b.scrollLeft:b._x)+dir*.35;if(x>=half)x-=half;if(x<0)x+=half;b._x=x;b.scrollLeft=x})})();
+function bar(){const Mb=$('#mbar');Mb.classList.toggle('on',pick);if(!pick)return;const n=sel.size;
+  Mb.innerHTML=`<span>选了 ${n} 箱</span><i></i><button id="bTop" ${n?'':'disabled'}>排到最前</button><button id="bDel" class="del" ${n?'':'disabled'}>搬走</button>`;
+  $('#bTop').onclick=()=>{const m=Math.min(...L.filter(t=>t.st==='wait').map(t=>t.t),Date.now());let k=0;L.forEach(t=>{if(sel.has(t.id)&&t.st==='wait')t.t=m-(++k)*1000});save();sel.clear();pick=false;draw();toast(k?'排到最前面了':'只有等着的能往前排')};
+  $('#bDel').onclick=e=>{const d=e.currentTarget;if(!d.dataset.s){d.dataset.s=1;d.textContent='确定搬走 '+n+' 箱？';return}document.querySelectorAll('.cell.sel').forEach(x=>x.classList.add('gone'));setTimeout(()=>{L=L.filter(t=>!sel.has(t.id));save();sel.clear();pick=false;draw()},350)}}
+function open(id){const t=L.find(x=>x.id===id);if(!t)return;cur=t;const st=t.st==='run'?`正吊着 · ${t.who||''} · 做了 ${dur(Date.now()-t.startT)}${t.pct?' · 大约 '+t.pct+'%':''}`:t.st==='wait'?`在码头上等着 · ${ago(t.t)}放下的${t.by==='me'?' · 你派的':''}`:`${t.fail?'没做成':'做完进舱了'} · ${t.who||''} · 用了 ${dur(t.doneT-t.startT)}`;
+  $('#det').innerHTML=`<div class="dh"><img src="${CR}" alt=""><div><b class="hand">${esc(t.title)}</b><span>${esc(st)}</span></div><button class="x" id="dX">放回去</button></div>
+    <div class="db"><h4>${t.st==='wait'?'还没开始，没有进展':'一路的进展'}</h4>${(t.log||[]).slice().reverse().map(l=>`<div class="lg hand"><small>${ago(l.t)}</small><span>${esc(l.x)}</span></div>`).join('')}</div>
+    <div class="da">${t.st==='wait'?'<button id="dTop">排到最前</button><button class="del" id="dDel">搬走不做了</button>':t.st==='run'?'<button class="del" id="dStop">叫他先停（演示）</button>':`<button class="del" id="dDel">从舱里清掉</button>${t.fail?'<button class="go" id="dRe">再排一次</button>':''}`}</div>`;
+  $('#dX').onclick=shut;const on=(s,f)=>{const e=$(s);if(e)e.onclick=f};
+  on('#dTop',()=>{t.t=Math.min(...L.filter(x=>x.st==='wait').map(x=>x.t))-1000;save();shut();toast('排到最前面了')});
+  on('#dDel',e=>{const d=e.currentTarget;if(!d.dataset.s){d.dataset.s=1;d.textContent='确定？';return}L=L.filter(x=>x.id!==t.id);save();shut()});
+  on('#dStop',()=>{t.st='wait';t.t=Date.now();(t.log=t.log||[]).push({t:Date.now(),x:'（演示）你叫停了，放回码头。'});save();shut();toast('放回码头上了')});
+  on('#dRe',()=>{t.st='wait';t.fail=0;t.t=Date.now();save();shut();toast('重新排上了')});$('#veil').classList.add('on')}
+function shut(){$('#veil').classList.remove('on');const sc=$('#body').scrollTop;draw();$('#body').scrollTop=sc}
+$('#veil').addEventListener('click',e=>{if(e.target.id==='veil')shut()});
+$('#aNo').onclick=()=>$('#ask').classList.remove('on');
+$('#aYes').onclick=()=>{const v=$('#aIn').value.trim();if(!v)return toast('写一下要他做什么');L.push({id:Date.now(),st:'wait',title:v,who:'',t:Date.now(),by:'me',log:[]});save();$('#ask').classList.remove('on');draw();toast('放到码头上了')};
+$('#aIn').onkeydown=e=>{if(e.key==='Enter')$('#aYes').click()};
+try{document.body.dataset.sky=parent.document.body.dataset.sky||''}catch(e){}
+$('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
+draw();setInterval(()=>{if(!$('#veil').classList.contains('on')&&!$('#ask').classList.contains('on')&&!seek&&!pick){const sc=$('#body').scrollTop;draw();$('#body').scrollTop=sc}},60000);
+</script><script src="../../fx.js"></script><script>Fx.hang('.sling',{max:15,k:24,c:1.1});</script></body></html>
