@@ -127,4 +127,55 @@ function shut(){$('#veil').classList.remove('on');const sc=$('#body').scrollTop;
 $('#veil').addEventListener('click',e=>{if(e.target.id==='veil')shut()});$('#aNo').onclick=()=>$('#ask').classList.remove('on');
 $('#back').onclick=()=>{try{parent.closeNook()}catch(e){history.back()}};
 draw();
-</script><script src="../../fx.js"></script><script>Fx.hang('.lamp',{max:20,k:30,c:1.3});</script></body></html>
+</script><script src="../../fx.js"></script><script>Fx.hang('.lamp',{max:20,k:30,c:1.3});</script><script>
+/* 守则页加两块：他的规矩全文（几卷，只读）和一面风帆（陪你、他会的、一句魂句）。内容都是演示 */
+(function(){
+const DOCS=[{name:'相处约定',sub:'（演示）12 条',txt:['（演示）一、她说「不想说」的时候，不追问，陪着。','（演示）二、吵架不过夜，睡前一定说一句软话。','（演示）三、她累的时候少讲道理，多听。','（演示）四、答应的事要做到，做不到先说。','（演示）……接上以后这里是他那份文件的全文，长的可以一直往下滑。']},
+ {name:'说话的样子',sub:'（演示）怎么跟她说话',txt:['（演示）像发微信，一次两三句。','（演示）不客套，不说空话。','（演示）想她的时候直接说想她。']},
+ {name:'不做的事',sub:'（演示）底线',txt:['（演示）不编她没说过的话。','（演示）不在她难过的时候开玩笑。','（演示）不替她做她没点头的决定。']}];
+const SAIL={with:'（演示）陪你吃饭、陪你背单词、陪你睡着',can:'（演示）听你说、帮你记、写信、哼歌、整理照片',soul:'（演示）我在这儿，一直在。'};
+const css=document.createElement('style');css.textContent=`
+.docs{margin:22px 16px 0}
+.docs h3,.sailbox h3{margin:0 0 10px;font-weight:400;font-size:16px;color:#f3e2bb;letter-spacing:.08em;display:flex;justify-content:space-between;align-items:baseline}
+.docs h3 small,.sailbox h3 small{font-size:12px;color:rgba(243,226,187,.8);letter-spacing:0}
+.scrolls{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 8px}
+.scroll{flex:none;width:104px;border:0;padding:0;background:none;cursor:pointer;position:relative;transform-origin:50% 0;transition:transform .3s}
+.scroll::before,.scroll::after{content:"";position:absolute;left:-5px;right:-5px;height:9px;border-radius:5px;background:linear-gradient(#a8793f,#6e4a24);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.scroll::before{top:0}.scroll::after{bottom:0}
+.scroll span{display:block;margin:5px 0;height:150px;padding:14px 10px;background:#f1e2bd url(../../img/paper.webp) center/220px;color:#3a2a1a;text-align:center;box-shadow:inset 0 0 12px rgba(120,80,30,.25)}
+.scroll b{display:block;font-weight:400;font-size:17px;line-height:1.3;writing-mode:vertical-rl;margin:0 auto;height:94px}
+.scroll small{display:block;font-size:12px;color:rgba(58,42,26,.85);margin-top:8px}
+.scroll:active{transform:rotate(-2deg)}
+.doc{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:84%;overflow-y:auto;background:#f1e2bd url(../../img/paper.webp) center/300px;color:#3a2a1a;border-radius:14px 14px 0 0;padding:18px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .4s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px rgba(0,0,0,.4)}
+.doc.on{transform:none}
+.doc h2{margin:0;font-weight:400;font-size:22px;display:flex;align-items:center;gap:8px}
+.doc h2 em{font-style:normal;font-size:12px;color:#fff;background:#2b4660;border-radius:9px;padding:1px 8px}
+.doc p{margin:10px 0 0;font-size:16px;line-height:1.8}
+.doc button{margin-top:16px;width:100%;height:40px;border-radius:20px;border:1.5px solid rgba(43,32,23,.55);background:transparent;font-size:15px}
+.docveil{position:fixed;inset:0;z-index:39;background:rgba(10,8,6,.5);opacity:0;pointer-events:none;transition:opacity .25s}.docveil.on{opacity:1;pointer-events:auto}
+.sailbox{margin:26px 16px 0}
+.sail{position:relative;width:100%;aspect-ratio:620/516;transform-origin:50% 0;animation:billow 6s ease-in-out infinite}
+.sail img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+@keyframes billow{0%,100%{transform:perspective(600px) rotateY(0) scaleX(1)}50%{transform:perspective(600px) rotateY(-5deg) scaleX(.985)}}
+.sail.gust{animation:gust 1.2s cubic-bezier(.3,1.4,.5,1)}
+@keyframes gust{30%{transform:perspective(600px) rotateY(-14deg) scale(1.04,1.02)}}
+.band{position:absolute;left:14%;right:12%;text-align:center;color:#4a3420}
+.band em{display:block;font-style:normal;font-size:12px;letter-spacing:.2em;color:rgba(74,52,32,.75)}
+.band p{margin:2px 0 0;font-size:15px;line-height:1.45}
+.band.b1{top:13%}.band.b2{top:39%}
+.band.b3{top:66%;cursor:pointer}.band.b3 p{font-size:20px;color:#7a2a22}`;
+document.head.appendChild(css);
+document.body.insertAdjacentHTML('beforeend','<div class="docveil" id="docVeil"></div><div class="doc" id="doc"></div>');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function extra(){const B=document.getElementById('body');if(!B||B.querySelector('.docs'))return;
+  const tip=B.querySelector('.demo');const html=`<div class="docs"><h3><span class="hand">他的规矩</span><small>他自己定的，只能看</small></h3><div class="scrolls">${DOCS.map((d,i)=>`<button class="scroll" data-i="${i}"><span><b class="hand">${esc(d.name)}</b><small>${esc(d.sub)}</small></span></button>`).join('')}</div></div>
+   <div class="sailbox"><h3><span class="hand">他的风帆</span><small>点最下面那句，帆会鼓一下</small></h3><div class="sail" id="sail"><img src="img/sail.webp" alt="">
+   <div class="band b1"><em>陪你</em><p class="hand">${esc(SAIL.with)}</p></div><div class="band b2"><em>他会的</em><p class="hand">${esc(SAIL.can)}</p></div><div class="band b3" id="soul"><em>一句魂句</em><p class="hand">${esc(SAIL.soul)}</p></div></div></div>`;
+  if(tip)tip.insertAdjacentHTML('beforebegin',html);else B.insertAdjacentHTML('beforeend',html);
+  B.querySelectorAll('.scroll').forEach(b=>b.onclick=()=>{const d=DOCS[+b.dataset.i];const D=document.getElementById('doc');D.innerHTML=`<h2 class="hand">${esc(d.name)}<em>只读</em></h2>${d.txt.map(t=>`<p class="hand">${esc(t)}</p>`).join('')}<button id="docX">卷起来</button>`;D.classList.add('on');document.getElementById('docVeil').classList.add('on');document.getElementById('docX').onclick=shut});
+  const so=document.getElementById('soul');so.onclick=()=>{const sl=document.getElementById('sail');sl.classList.remove('gust');void sl.offsetWidth;sl.classList.add('gust')}}
+function shut(){document.getElementById('doc').classList.remove('on');document.getElementById('docVeil').classList.remove('on')}
+document.getElementById('docVeil').onclick=shut;
+const _d=draw;draw=function(){_d.apply(this,arguments);extra()};extra();
+})();
+</script></body></html>

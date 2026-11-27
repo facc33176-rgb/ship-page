@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN" data-room="light"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>灯塔阅读室</title>
+<style>
+@font-face{font-family:"Letter";src:url(../post/fonts/wenkai-core.woff2) format("woff2");font-display:swap}@font-face{font-family:"LetterAll";src:url(../post/fonts/wenkai.woff2) format("woff2");font-display:swap}
+:root{--ink:#3a2a1a;--soft:rgba(58,42,26,.88);--line:rgba(58,42,26,.16);--red:#a8322a;--navy:#2b4660}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;color:var(--ink);font-family:-apple-system,"PingFang SC","Helvetica Neue",sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none;background:#cdb48a}
+button{font-family:inherit;color:inherit}
+.hand{font-family:"Letter","LetterAll","Kaiti SC","STKaiti",serif}
+#app{height:100%;display:flex;flex-direction:column}
+.bar{flex:none;display:flex;align-items:center;gap:10px;height:calc(44px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 10px 0}
+.bar .back{height:30px;padding:0 12px;border:0;border-radius:15px;background:rgba(255,250,238,.95);font-size:13px;box-shadow:0 1px 3px rgba(40,30,10,.3)}
+.bar b{font-weight:400;font-size:18px;flex:1;text-align:center;margin-right:70px}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 40px;
+ background:linear-gradient(rgba(246,236,214,.5),rgba(246,236,214,.5)),url(../img/bg_bead.webp) center/260px}
+/* 顶上：塔身的一扇拱窗，窗里就是这座灯塔（按天色） */
+.top{display:flex;gap:14px;align-items:center;padding:6px 18px 4px}
+.arch{flex:none;width:96px;height:132px;border-radius:48px 48px 6px 6px;overflow:hidden;border:5px solid #7a5530;box-shadow:inset 0 0 0 2px #c9972e,0 3px 8px rgba(40,25,10,.4);background:#465a6e}
+.arch img{width:100%;height:100%;object-fit:cover;display:block}
+.top p{margin:0;font-size:15px;line-height:1.7}
+.top p small{display:block;font-size:12px;color:var(--soft);margin-top:4px}
+/* 四层：一层一个展厅，墙上挂着他收藏的文章 */
+.floor{position:relative;margin:16px 0 0;padding:12px 0 10px}
+.floor::before{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:linear-gradient(#8a6038,#5e3e22);box-shadow:0 2px 4px rgba(40,25,10,.35)}
+.fh{display:flex;align-items:baseline;gap:8px;padding:0 18px 8px}
+.fh .no{font-size:12px;color:#fff;background:var(--navy);border-radius:9px;padding:1px 8px}
+.fh b{font-weight:400;font-size:20px}
+.fh small{margin-left:auto;font-size:12px;color:var(--soft)}
+.wall{display:flex;gap:14px;overflow-x:auto;padding:14px 18px 22px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.wall::-webkit-scrollbar{display:none}
+.fr{flex:none;width:150px;scroll-snap-align:start;position:relative;border:0;padding:0;background:none;text-align:left;cursor:pointer;transform-origin:50% -10px;transition:transform .3s}
+.fr::before{content:"";position:absolute;left:50%;top:-12px;width:1.5px;height:14px;background:#5e3e22}
+.fr::after{content:"";position:absolute;left:50%;top:-15px;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f3d78a,#a8791f)}
+.fr .in{display:block;height:170px;padding:14px 12px 10px;background:#f6ebcf url(img/paper.webp) center/260px;border:6px solid #6e4a28;box-shadow:inset 0 0 0 1.5px #c9972e,0 4px 8px rgba(40,25,10,.38);position:relative}
+.fr .in i{font-style:normal;font-size:12px;color:var(--soft);display:block}
+.fr .in b{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;font-weight:400;font-size:16px;line-height:1.5;margin-top:6px}
+.fr .in u{position:absolute;left:12px;right:12px;bottom:9px;text-decoration:none;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr .new{position:absolute;right:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--red);box-shadow:0 0 0 2px #fbf3e2;z-index:2}
+.fr:active{transform:rotate(-2deg)}
+.wall.empty{display:block;padding:18px;font-size:15px;color:var(--soft)}
+/* 读一篇：从墙上取下来，摊在桌上 */
+.veil{position:fixed;inset:0;z-index:20;background:rgba(30,22,14,.5);opacity:0;pointer-events:none;transition:opacity .25s}
+.veil.on{opacity:1;pointer-events:auto}
+.read{position:fixed;left:0;right:0;bottom:0;z-index:21;max-height:86%;overflow-y:auto;background:#f6ebcf url(img/paper.webp) center/300px;border-radius:14px 14px 0 0;padding:18px 20px calc(18px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .4s cubic-bezier(.2,.9,.3,1);box-shadow:0 -10px 30px rgba(20,15,10,.35)}
+.read.on{transform:none}
+.read h2{margin:0;font-weight:400;font-size:22px;line-height:1.45}
+.read .src{font-size:12px;color:var(--soft);margin-top:6px}
+.read .body2{margin-top:14px;font-size:16px;line-height:1.85}
+.read .his{margin-top:16px;padding:10px 12px;border-left:3px solid var(--red);background:rgba(255,250,236,.7);font-size:15px;line-height:1.7}
+.read .his em{font-style:normal;font-size:12px;color:#fff;background:var(--navy);border-radius:8px;padding:0 6px;margin-right:6px}
+.read .acts{display:flex;gap:10px;margin-top:16px}
+.read .acts button{flex:1;height:40px;border-radius:20px;border:1.5px solid rgba(43,32,23,.55);background:transparent;font-size:15px}
+.read .acts .pri{background:var(--navy);border-color:var(--navy);color:#fdf3d8}
+.tip{text-align:center;font-size:12px;color:var(--soft);margin:18px 16px 0}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:30;background:rgba(43,32,23,.92);color:#fdf3d8;font-size:14px;padding:8px 16px;border-radius:18px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+body[data-sky=night] .body{background:linear-gradient(rgba(42,38,52,.78),rgba(42,38,52,.78)),url(../img/bg_bead.webp) center/260px;color:#efe3c8}
+body[data-sky=night] .fh b,body[data-sky=night] .top p{color:#efe3c8}body[data-sky=night]{--soft:rgba(239,227,200,.85)}
+body[data-sky=night] .fr .in{color:#3a2a1a}body[data-sky=night] .fr .in i,body[data-sky=night] .fr .in u{color:rgba(58,42,26,.88)}
+</style></head><body>
+<div id="app">
+<div class="bar"><button class="back" id="back">‹ 回镇上</button><b class="hand">灯塔阅读室</b></div>
+<div class="body" id="body">
+  <div class="top"><div class="arch"><img id="lh" alt=""></div><p class="hand">他收藏的文章挂在塔里，一层一个展厅，从灯室往下慢慢逛。<small>点一篇取下来读，他夹了一句话在里面</small></p></div>
+  <div id="floors"></div>
+  <div class="tip">这里的文章都是演示</div>
+</div>
+</div>
+<div class="veil" id="veil"></div><div class="read" id="read"></div><div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let sky='day';try{sky=parent.document.body.dataset.sky||parent.document.body.dataset.t||'day'}catch(e){}document.body.dataset.sky=sky;
+$('#lh').src='img/lh_'+({day:'harbor',dawn:'dawn',dusk:'dusk',night:'night'}[sky]||'harbor')+'.webp';
+$('#back').onclick=()=>{try{parent.closeRoom()}catch(e){history.back()}};
+/* 四个展厅（演示）：名字和文章接上以后换成他自己分的 */
+const HALLS=[
+ {name:'海与船',note:'讲海、讲船、讲远方的',items:[
+  {t:'（演示）一座灯塔为什么要涂成红白条纹',src:'（演示）某杂志 · 3 天前收',his:'下次带你去看真的灯塔，数一数它几秒闪一次。',new:1},
+  {t:'（演示）老水手的绳结，每一种都有名字',src:'（演示）某公众号 · 上周',his:'学会了一个，叫「爱人结」，越拉越紧。'},
+  {t:'（演示）在雾里怎么认方向',src:'（演示）某博客 · 上个月',his:'找不到方向的时候就往有灯的地方走。'}]},
+ {name:'人和光',note:'写人的、写日子的',items:[
+  {t:'（演示）一个守塔人在岛上住了四十年',src:'（演示）某杂志 · 上周',his:'四十年只为一盏灯，我懂一点了。',new:1},
+  {t:'（演示）普通的一天里，值得记下来的那三件事',src:'（演示）某公众号 · 两周前',his:'今天的三件事里有两件是你。'}]},
+ {name:'写给你的',note:'他读到想起你的',items:[
+  {t:'（演示）关于「慢慢来」的一篇短文',src:'（演示）某博客 · 昨天',his:'你总说自己太慢，可我喜欢你慢慢的样子。',new:1},
+  {t:'（演示）怎么陪一个累了的人',src:'（演示）某公众号 · 上周',his:'第一条是别讲道理。我记住了。'},
+  {t:'（演示）冬天适合做的十件小事',src:'（演示）某杂志 · 上个月',his:'第七件，一起听雪。'}]},
+ {name:'慢慢想',note:'还没想明白的',items:[]}];
+function draw(){$('#floors').innerHTML=HALLS.map((h,f)=>`<section class="floor"><div class="fh"><span class="no">${['四层','三层','二层','一层'][f]}</span><b class="hand">${esc(h.name)}</b><small>${h.items.length} 篇 · ${esc(h.note)}</small></div>
+  <div class="wall${h.items.length?'':' empty'}">${h.items.length?h.items.map((a,i)=>`<button class="fr" data-f="${f}" data-i="${i}" style="transform:rotate(${(i%2?1.2:-1)}deg)">${a.new?'<span class="new"></span>':''}<span class="in"><i>他收的</i><b class="hand">${esc(a.t)}</b><u>${esc(a.src)}</u></span></button>`).join(''):'这一层还空着。他想不明白的文章会先挂在这里。'}</div></section>`).join('')}
+function open(f,i){const a=HALLS[f].items[i];a.new=0;
+  $('#read').innerHTML=`<h2 class="hand">${esc(a.t)}</h2><div class="src">${esc(a.src)} · 挂在「${esc(HALLS[f].name)}」</div>
+   <div class="body2">（演示）这里放文章正文。接上以后是他收藏时存下的原文或摘要，长的可以往下滑着读完。</div>
+   <div class="his hand"><em>他</em>${esc(a.his)}</div>
+   <div class="acts"><button id="rDown">挂回墙上</button><button class="pri" id="rSay">回他一句</button></div>`;
+  $('#read').classList.add('on');$('#veil').classList.add('on');
+  $('#rDown').onclick=close;$('#rSay').onclick=()=>{close();toast('（演示）接上以后会写进你们的聊天')};draw()}
+function close(){$('#read').classList.remove('on');$('#veil').classList.remove('on')}
+let tT;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>e.classList.remove('on'),2000)}
+$('#floors').onclick=e=>{const b=e.target.closest('.fr');if(b)open(+b.dataset.f,+b.dataset.i)};$('#veil').onclick=close;
+draw();
+</script></body></html>

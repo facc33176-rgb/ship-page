@@ -220,7 +220,8 @@ $('#app').addEventListener('scroll',e=>{e.currentTarget.scrollTop=0});
 /* 撕票 */
 (()=>{const G=$('#gate'),T=$('#tk'),st=$('#stub'),d=new Date();$('#tkD').textContent=d.getFullYear()+' . '+String(d.getMonth()+1).padStart(2,'0')+' . '+String(d.getDate()).padStart(2,'0');let x0=null,dx=0,done=false;
   const fit=()=>{const w=T.offsetWidth;T.querySelectorAll('.p img').forEach(i=>i.style.width=w+'px')};fit();addEventListener('resize',fit);
-  const tear=()=>{if(done)return;done=true;try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}st.style.transform='';G.classList.add('done')};
+  const today=d.toDateString();try{if(localStorage.getItem('cinema-torn')===today){done=true;G.classList.add('done');G.style.display='none'}}catch(e){}
+  const tear=()=>{if(done)return;done=true;try{localStorage.setItem('cinema-torn',today)}catch(e){}try{navigator.vibrate&&navigator.vibrate(25)}catch(e){}st.style.transform='';G.classList.add('done')};
   st.addEventListener('pointerdown',e=>{x0=e.clientX;dx=0;st.setPointerCapture(e.pointerId);st.style.transition='none'});
   st.addEventListener('pointermove',e=>{if(x0==null||done)return;dx=Math.max(0,e.clientX-x0);st.style.transform=`translate(${dx*.5}px,${-dx*.12}px) rotate(${Math.min(22,dx*.22)}deg)`;if(dx>70){st.style.transition='';tear()}});
   const up=()=>{if(x0==null)return;x0=null;st.style.transition='';if(!done){if(dx<8)tear();else st.style.transform=''}};st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up);

@@ -139,6 +139,24 @@ body[data-sky=night] .obh b,body[data-sky=night] .obh button{color:#efe3c8;borde
 .dial.whirl .hh{animation:whirl .8s cubic-bezier(.3,.8,.3,1)}.dial.whirl .mm{animation:whirl .8s cubic-bezier(.3,.8,.3,1)}
 @keyframes whirl{from{rotate:-360deg}to{rotate:0deg}}
 .body{padding-top:20px!important}
+
+/* 你今天呢：写一句、他回一句、撕掉 */
+.mwrite{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.mwrite input[type=text]{flex:1 1 100%;height:38px;border:1.5px solid rgba(58,42,26,.2);border-radius:8px;padding:0 10px;font-size:16px;background:rgba(255,253,246,.9);font-family:"Letter","LetterAll","Kaiti SC",serif}
+.mwrite label{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(58,42,26,.88)}
+.mwrite label input{width:16px;height:16px;accent-color:#2b4660}
+.mwrite button{margin-left:auto;height:32px;padding:0 16px;border:0;border-radius:16px;background:#2b4660;color:#fdf3d8;font-size:14px}
+.mnote{position:relative;margin-top:10px;padding:10px 12px 8px;background:#fffaf0;border-radius:3px;box-shadow:0 1px 3px rgba(40,25,10,.22);transform:rotate(-.6deg);
+ clip-path:polygon(0 0,100% 0,100% 100%,96% 97%,91% 100%,86% 97%,80% 100%,74% 97%,68% 100%,62% 97%,56% 100%,50% 97%,44% 100%,38% 97%,32% 100%,26% 97%,20% 100%,14% 97%,8% 100%,3% 97%,0 100%)}
+.mnote p{margin:0;font-size:16px;line-height:1.6;color:#3a2a1a}
+.mnote.priv{background:#f3efe6}
+.mmeta{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:rgba(58,42,26,.7)}
+.mmeta button{margin-left:auto;border:0;background:none;font-size:13px;color:#8a3a2a;padding:4px 2px}
+.mrep{font-weight:400;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(58,42,26,.25);font-size:15px;line-height:1.6;animation:mrin .5s ease both}
+.mrep em{font-style:normal;font-size:12px;color:#fff;background:#2b4660;border-radius:8px;padding:0 6px;margin-right:6px;vertical-align:1px}
+@keyframes mrin{from{opacity:0;transform:translateY(-4px)}}
+.mnote.torn{animation:tear .65s cubic-bezier(.5,0,.8,.4) forwards}
+@keyframes tear{30%{transform:rotate(-4deg) translate(4px,-3px)}100%{transform:rotate(18deg) translate(140px,90px);opacity:0}}
 </style><link rel="stylesheet" href="../skin.css"></head>
 <body><div id="app" data-tuck="no">
   <div class="head"><button class="back" id="back">‹ 回镇上</button><div class="dial" id="dial"><i class="hh"></i><i class="mm"></i><i class="ss"></i><b></b></div>
@@ -184,16 +202,26 @@ function cal(){const B=$('#body'),mo=get('tower-moods',{}),evs=events(),first=ne
   h+=`<div class="day"><h3><span class="hand" style="font-size:17px">${sel.getMonth()+1} 月 ${sel.getDate()} 日 · 周${WK[sel.getDay()]}${an.length?' · '+esc(an[0].name):''}</span><button id="toPage">看这一天 ›</button></h3>
     <div class="cnt"><div><b>${s.calls}</b><span>通话</span></div><div><b>${s.songs}</b><span>推歌</span></div><div><b>${s.ev.filter(e=>e.k==='letter').length}</b><span>信</span></div><div><b>${s.ev.filter(e=>e.k==='note'||e.k==='reply').length}</b><span>便签</span></div></div>
     <div class="mood"><em>他</em>${s.mood.him?`<i style="--c:${MOOD[s.mood.him][1]}"></i>${MOOD[s.mood.him][0]}`:'<span style="color:var(--soft)">没记</span>'}</div>
-    <div class="mood"><em>你</em>${isToday?`<span class="pick">${Object.entries(MOOD).map(([k,[n,c]])=>`<button data-m="${k}" class="${s.mood.me===k?'on':''}"><i style="--c:${c};background:${c};border-radius:50%"></i>${n}</button>`).join('')}</span>`:(s.mood.me?`<i style="--c:${MOOD[s.mood.me][1]}"></i>${MOOD[s.mood.me][0]}`:'<span style="color:var(--soft)">没记</span>')}</div></div>`;
+    <div class="mood"><em>你</em>${isToday?`<span class="pick">${Object.entries(MOOD).map(([k,[n,c]])=>`<button data-m="${k}" class="${s.mood.me===k?'on':''}"><i style="--c:${c};background:${c};border-radius:50%"></i>${n}</button>`).join('')}</span>`:(s.mood.me?`<i style="--c:${MOOD[s.mood.me][1]}"></i>${MOOD[s.mood.me][0]}`:'<span style="color:var(--soft)">没记</span>')}</div>${noteBlock(isToday)}</div>`;
   const days=get('tower-days',[]).map(x=>{const n=day0(Date.now());let t=new Date(n.getFullYear(),+x.md.slice(0,2)-1,+x.md.slice(3));if(t<n)t=new Date(n.getFullYear()+1,+x.md.slice(0,2)-1,+x.md.slice(3));return{...x,left:Math.round((t-n)/D)}}).sort((a,b)=>a.left-b.left);
   h+=`<div class="ann"><h4><span>纪念日</span><button id="annAdd">＋ 记一个</button></h4><div id="annForm"></div>${days.map(x=>`<div class="arow"><img src="img/anchor.webp" alt=""><b>${esc(x.name)}</b><span>${+x.md.slice(0,2)} 月 ${+x.md.slice(3)} 日</span><u>${x.left?'还有 '+x.left+' 天':'就是今天'}</u><button data-del="${x.id}" aria-label="删掉">×</button></div>`).join('')||'<p class="sum">还没有记过纪念日。</p>'}</div>`;
   B.innerHTML=h;
   $('#mp').onclick=()=>{ym=new Date(ym.getFullYear(),ym.getMonth()-1,1);cal()};$('#mn').onclick=()=>{ym=new Date(ym.getFullYear(),ym.getMonth()+1,1);cal()};$('#mt').onclick=()=>{sel=day0(Date.now());ym=new Date(sel.getFullYear(),sel.getMonth(),1);cal()};
   B.querySelectorAll('.d').forEach(b=>b.onclick=()=>{sel=new Date(+b.dataset.k);const st=B.scrollTop;cal();$('#body').scrollTop=st});
-  $('#toPage').onclick=()=>{tab='page';draw()};
+  $('#toPage').onclick=()=>{tab='page';draw()};bindNote();
   B.querySelectorAll('.pick button').forEach(b=>b.onclick=()=>{const m=get('tower-moods',{}),k=key(sel);m[k]=m[k]||{};m[k].me=m[k].me===b.dataset.m?undefined:b.dataset.m;set('tower-moods',m);const st=B.scrollTop;cal();$('#body').scrollTop=st});
   $('#annAdd').onclick=()=>{$('#annForm').innerHTML=`<div class="form"><input type="text" id="aN" maxlength="16" placeholder="叫什么"><input type="date" id="aD" value="${key(sel)}"><button id="aOk">记下</button></div>`;$('#aN').focus();$('#aOk').onclick=()=>{const n=$('#aN').value.trim(),d=$('#aD').value;if(!n||!d)return;const a=get('tower-days',[]);a.push({id:Date.now(),name:n,md:d.slice(5)});set('tower-days',a);cal();toast('记下了，每年这天都会挂一只锚')}};
   B.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(!b.dataset.s){b.dataset.s=1;b.textContent='删？';return}set('tower-days',get('tower-days',[]).filter(x=>x.id!=b.dataset.del));cal()})}
+/* ── 「你今天呢」点了天气以后写一句：他会回一句；勾「只给自己看」就不给他；不想要了撕掉 ── */
+const REPLIES=['（演示）收到，今天辛苦了，晚上早点歇。','（演示）我在呢，等你忙完说给我听。','（演示）听着就想抱抱你。','（演示）记下了，明天的天会好一点。'];
+function noteBlock(isToday){const m=(get('tower-moods',{})[key(sel)])||{},n=m.note;
+  if(n)return `<div class="mnote${n.priv?' priv':''}" id="mnote"><p class="hand">${esc(n.txt)}</p><div class="mmeta">${n.priv?'<span>只给自己看</span>':(n.reply?'':'<span>等他回…</span>')}<button id="mTear">撕掉</button></div>${!n.priv&&n.reply?`<div class="mrep"><em>他</em>${esc(n.reply)}</div>`:''}</div>`;
+  if(isToday&&m.me)return `<div class="mwrite"><input type="text" id="mIn" maxlength="60" placeholder="再写一句，今天怎么样"><label><input type="checkbox" id="mPriv">只给自己看</label><button id="mGo">记下</button></div>`;
+  return ''}
+function bindNote(){const k=key(sel),re=()=>{const st=$('#body').scrollTop;cal();$('#body').scrollTop=st};
+  const go=$('#mGo');if(go)go.onclick=()=>{const t=$('#mIn').value.trim();if(!t)return;const all=get('tower-moods',{});all[k]=all[k]||{};all[k].note={txt:t,priv:$('#mPriv').checked,at:Date.now()};set('tower-moods',all);re();
+    if(!all[k].note.priv)setTimeout(()=>{const a=get('tower-moods',{});if(a[k]&&a[k].note&&!a[k].note.priv&&!a[k].note.reply){a[k].note.reply=REPLIES[Math.floor(Math.random()*REPLIES.length)];set('tower-moods',a);if(tab==='cal'&&key(sel)===k)re()}},1800)};
+  const tr=$('#mTear');if(tr)tr.onclick=e=>{const b=e.currentTarget;if(!b.dataset.s){b.dataset.s=1;b.textContent='撕？';return}const n=$('#mnote');n.classList.add('torn');setTimeout(()=>{const a=get('tower-moods',{});if(a[k])delete a[k].note;set('tower-moods',a);re()},650)}}
 /* ── 一日一页 ── */
 const WHO=f=>f==='him'?'他':'你';
 function page(){const B=$('#body'),s=stats(sel),k=key(sel),today=day0(Date.now()),an=annOn(sel);const ev=s.ev.map(e=>({...e}));

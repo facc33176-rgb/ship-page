@@ -210,4 +210,4 @@ function save(){now.at=Date.now();now.day[new Date().getHours()]=now.drive;now.h
 const br=$('#breath');let brT;
 $('#win').onclick=()=>{if(br.classList.contains('on')){br.classList.remove('on');return}br.innerHTML=now.thought+'<small>'+ago(now.at)+'</small>';br.classList.add('on');clearTimeout(brT);brT=setTimeout(()=>br.classList.remove('on'),7000)};
 size();paint();chips();requestAnimationFrame(draw);
-</script></body></html>
+</script><script src="mood-more.js"></script></body></html>

@@ -359,6 +359,16 @@ body.under *{animation-play-state:paused!important}
 
 /* 动效减法：常驻循环每屏最多三样，挂着的东西改成手碰到、滑动带到才晃（fx.js） */
 .note{animation:none!important;transform:rotate(var(--k,0deg))}
+
+/* 挂念：最显眼的那根绳上，有新的会亮一下；念头罐：一排小纸条 */
+.big.miss{background:#fbf1d8}
+.bacts{display:flex;gap:10px;margin-top:16px}
+.bacts button{flex:1;height:36px;border-radius:18px;border:1.5px solid #2b2017;background:transparent;font:inherit;font-size:14px;letter-spacing:.06em;cursor:pointer}
+.bacts .go{background:#2b4660;border-color:#2b4660;color:#fdf3d8}
+.big.slip{background:#f3ead6;min-height:150px}
+.tag.glow{animation:glowtag 1.6s ease-in-out 3;box-shadow:0 0 0 0 rgba(255,214,120,.0)}
+@keyframes glowtag{50%{box-shadow:0 0 14px 6px rgba(255,214,120,.95),0 1px 4px rgba(60,35,10,.28)}}
+.jarlab{position:absolute;z-index:4;font:400 12px/1.2 "Letter","LetterAll","Kaiti SC",serif;color:#4a3420;background:rgba(255,248,232,.9);padding:2px 6px;border-radius:3px;box-shadow:0 1px 3px rgba(40,25,10,.25);transform:translate(-50%,-100%) rotate(-3deg);pointer-events:none;white-space:nowrap}
 </style>
 </head>
 <body data-sky="dusk">
@@ -398,7 +408,7 @@ body.under *{animation-play-state:paused!important}
   <p class="snow hand" id="skSay"></p>
   <div class="rosebox"><i class="rmark"></i><div class="rose" id="rose"><img src="img/rose.webp" alt=""><b class="hand" style="--a:0deg">夜里</b><b class="hand" style="--a:90deg">清晨</b><b class="hand" style="--a:180deg">白天</b><b class="hand" style="--a:270deg">黄昏</b></div><button class="rhub hand" id="skAuto">跟着<br>时间</button></div>
   <p class="shint">转这张罗盘：东边日出是清晨，正南是白天，西边日落是黄昏，北边是夜里。<br>点中间，天色就跟着真的时间走。</p>
-  <div class="sgo"><button id="taskGo"><img src="../music/img/crate.webp" alt=""><b class="hand">他手上的活</b><small id="taskSay"></small></button><button id="ruleGo"><img src="../books/img/pr5.webp" alt=""><b class="hand">灯和守则</b><small id="ruleSay"></small></button></div>
+  <div class="sgo"><button id="taskGo"><img src="../music/img/crate.webp" alt=""><b class="hand">助手的活</b><small id="taskSay"></small></button><button id="ruleGo"><img src="../books/img/pr5.webp" alt=""><b class="hand">灯和守则</b><small id="ruleSay"></small></button></div>
   <div class="hint">活和守则里的条目是演示用的，接上后端换成真的</div></div></section>
   <section class="page" id="trove"><div class="rtop"><button id="troveBack">回船上</button><h2>收藏</h2></div>
   <div class="sc"><h3><img src="img/l0.webp" alt="">相册</h3><div class="shots" id="shots"></div>
@@ -408,8 +418,8 @@ body.under *{animation-play-state:paused!important}
 </div>
 <script>
 /* 演示数据：接后端只换这一块 */
-const WINS=[{name:'波波哥',unread:2},{name:'全家',unread:0},{name:'圆桌会',unread:1}];
-const NOTES=[{from:'他',text:'出门记得带伞。'},{from:'你',text:'今天想吃面。',re:1},{from:'他',text:'睡前把窗关上。'},{from:'他',text:'药在左边抽屉。'},{from:'你',text:'周末去看海。'}];
+const WINS=[{name:'波波哥',unread:2},{name:'全家',unread:0,group:1},{name:'圆桌会',unread:1,group:1}];
+const NOTES=[{text:'（演示）想问你冷不冷。'},{text:'（演示）那首歌我听了三遍。'},{text:'（演示）其实昨天有点想你。'},{text:'（演示）下次换我先说晚安。'},{text:'（演示）码头的灯是为你留的。'}]; /* 念头罐：他攒着还没说出口的念头 */
 const LETTERS={total:5,unread:1},TICKET=true;
 const SAID={text:'今天风小，船不晃。你来的时候，窗是亮着的。',at:'XI · XXIV',fresh:true},WIND=3; /* 风力 0～8，接他的心情 */
 const $=s=>document.querySelector(s),h=(c,html)=>{const e=document.createElement('div');e.className=c;if(html!=null)e.innerHTML=html;return e};
@@ -434,7 +444,7 @@ function setCalls(w,c){try{localStorage.setItem('cabin-calls2-'+w.name,JSON.stri
 [[306,596],[592,600],[962,598]].forEach(([x,y],i)=>{const g=document.createElement('img');g.src='img/phone.webp';g.alt='';g.className='wphone'+(i===1?'':'');const a=P(x,y),z=P(24,0).x;g.style.cssText=`left:${a.x}%;top:${a.y}%;width:${z}%`;boat.appendChild(g)});
 function enter(i){const [x,wd]=CAB[i],cx=P(x+wd/2,0).x,W=stage.offsetWidth,w=WINS[i];pan.scrollTo({left:W*cx/100-pan.clientWidth/2,behavior:'smooth'});
   setTimeout(()=>{stage.style.transformOrigin=`${cx}% 62%`;if(!calm)stage.style.transform='scale(1.7)';const sh=$('#sheet');
-    sh.innerHTML=`<h3>${w.name}</h3><p>${w.unread?w.unread+' 句新的':'安静着'}</p><ul><li data-a="进去说话">进去说话<em class="${w.unread?'hot':''}">${w.unread?w.unread+' 句新的':''}</em></li><li data-a="打电话"><img src="img/phone.webp" alt="">打电话</li><li data-a="通话记录">通话记录<em>${getCalls(w).length} 通</em></li></ul><div class="log">${getCalls(w).slice(0,3).map(c=>fmtT(c.t)+' · '+fmtD(c.d)).join('<br>')}</div>`;
+    sh.innerHTML=`<h3>${w.name}</h3><p>${w.unread?w.unread+' 句新的':'安静着'}</p><ul><li data-a="进去说话">进去说话<em class="${w.unread?'hot':''}">${w.unread?w.unread+' 句新的':''}</em></li>${w.group?'':`<li data-a="打电话"><img src="img/phone.webp" alt="">打电话</li><li data-a="通话记录">通话记录<em>${getCalls(w).length} 通</em></li>`}</ul>${w.group?'<div class="log">群里没有电话</div>':`<div class="log">${getCalls(w).slice(0,3).map(c=>fmtT(c.t)+' · '+fmtD(c.d)).join('<br>')}</div>`}`;
     sh.querySelectorAll('li').forEach(li=>li.onclick=()=>{const a=li.dataset.a;if(a==='进去说话')Chat.open(w);else if(a==='打电话')Chat.dial(w);else Chat.phone(w)});sh.classList.add('on');$('#veil').classList.add('on')},calm?0:320)}
 
 /* ===== 聊天 ===== */
@@ -585,9 +595,13 @@ const Chat=(()=>{const el=$('#chat'),box=$('#cMsgs');let cur=null,log=[];const k
   return {open,dial:w=>{open(w);phone();dial()},phone:w=>{open(w);phone()}}})();
 /* 绳上的便签：顺着绳子的弧线挂 */
 const rope=x=>{const t=(x-690)/470;return 235+35*t+4*118*t*(1-t)*.72};
-NOTES.forEach((n,i)=>{const x=884+i*60,y=rope(x)+10,e=h('note'+(n.from==='你'?' me':''),n.text+(n.re?`<b>${n.re}</b>`:''));const a=P(x,y);e.style.left=a.x+'%';e.style.top=a.y+'%';
+NOTES.forEach((n,i)=>{const x=884+i*60,y=rope(x)+10,e=h('note',n.text);const a=P(x,y);e.style.left=a.x+'%';e.style.top=a.y+'%';
   e.style.setProperty('--t',(2.8+i*.35)+'s');e.style.setProperty('--d',(-i*.7)+'s');e.addEventListener('click',()=>openNote(n));boat.appendChild(e)});
-function openNote(n){const b=$('#big');b.className='big on'+(n.from==='你'?' me':'');b.innerHTML=n.text+`<small>${n.from} 贴的${n.re?' · '+n.re+' 条回帖':''}</small>`;$('#veil').classList.add('on')}
+function openNote(n){const b=$('#big');b.className='big on slip';b.innerHTML=n.text+`<small>念头罐 · 他攒着还没说出口的</small>`;$('#veil').classList.add('on')}
+$('#big').addEventListener('click',e=>{const k=e.target.closest('.bacts button');if(!k)return;e.stopPropagation();$('#big').classList.remove('on');$('#veil').classList.remove('on');
+  if(k.dataset.k==='keep'){toast('收着了，想看再来绳子上取');return}
+  /* 去找他：接你们自己的聊天页；演示里打开波波哥那间舱 */
+  setTimeout(()=>{const h=[...document.querySelectorAll('.hit')].find(x=>x.getAttribute('aria-label')==='进 波波哥 的舱');h&&h.click();setTimeout(()=>{const li=document.querySelector('#sheet li[data-a="进去说话"]');li&&li.click()},700)},250)},true);
 $('#veil').onclick=$('#big').onclick=()=>{$('#big').classList.remove('on');$('#veil').classList.remove('on');$('#sheet').classList.remove('on');stage.style.transform=''};
 
 const NOOK={'他的心情':'mood','额度':'quota','抽签':'draw'};
@@ -602,8 +616,9 @@ window.closeNook=()=>{const w=$('#nook');w.classList.remove('on');ashore(true);s
 if(TICKET){boat.appendChild(h('ticket'));const t=h('tag','船票<small>1</small>');const a=P(40,610);t.style.left=a.x+'%';t.style.top=a.y+'%';boat.appendChild(t)}
 hit(60,600,150,310,()=>openNook('ticket',8),'船票');
 /* 他挂的话：系在主桅上的一卷信 */
-(()=>{const t=h('tag','他的话'+(SAID.fresh?'<small>新</small>':''));const a=P(596,400);t.style.left=a.x+'%';t.style.top=a.y+'%';t.style.setProperty('--r','-4deg');boat.appendChild(t);
-  hit(585,385,130,90,()=>{const b=$('#big');b.className='big on';b.innerHTML=SAID.text+`<small>${SAID.at} · 他留的</small>`;$('#veil').classList.add('on');t.querySelector('small')&&t.querySelector('small').remove()},'他挂的话')})();
+(()=>{const t=h('tag'+(SAID.fresh?' glow':''),'挂念'+(SAID.fresh?'<small>新</small>':''));const a=P(596,400);t.style.left=a.x+'%';t.style.top=a.y+'%';t.style.setProperty('--r','-4deg');boat.appendChild(t);
+  {const j=h('jarlab','念头罐 · 点一张看');const p=P(884,rope(884)-6);j.style.left=p.x+'%';j.style.top=p.y+'%';boat.appendChild(j)}
+  hit(585,385,130,90,()=>{const b=$('#big');b.className='big on miss';b.innerHTML=SAID.text+`<small>${SAID.at} · 他想你的时候写的</small><div class="bacts"><button data-k="keep">先收着</button><button data-k="go" class="go">去找他</button></div>`;$('#veil').classList.add('on');SAID.fresh=false;t.classList.remove('glow');t.querySelector('small')&&t.querySelector('small').remove()},'他挂的话')})();
 /* 船上别的去处 */
 [[95,468,'设置',20,470,185,130,-3],].forEach(([tx,ty,name,x,y,w,hh,r])=>{
   const t=h('tag',name);const a=P(tx,ty);t.style.left=a.x+'%';t.style.top=a.y+'%';boat.appendChild(t);hit(x,y,w,hh,()=>{$('#setp').classList.add('on');ashore(false)},name)});
@@ -619,7 +634,7 @@ hit(60,600,150,310,()=>openNook('ticket',8),'船票');
   R.onpointerdown=e=>{st={a:ang(e),r:rot,mv:false,t:e.target};R.setPointerCapture(e.pointerId)};
   R.onpointermove=e=>{if(!st)return;let d=ang(e)-st.a;d=((d+540)%360)-180;if(Math.abs(d)>3)st.mv=true;if(!st.mv)return;rot=st.r+d;R.style.transition='none';R.style.transform=`rotate(${rot}deg)`;const k=Object.keys(ANG).sort((x,y)=>Math.abs(near(rot,ANG[x])-rot)-Math.abs(near(rot,ANG[y])-rot))[0];show(k)};
   R.onpointerup=R.onpointercancel=()=>{if(!st)return;const mv=st.mv,tg=st.t;st=null;if(!mv){if(tg&&tg.tagName==='B')pick(Object.keys(NAME).find(k=>NAME[k]===tg.textContent));return}const k=Object.keys(ANG).sort((x,y)=>Math.abs(near(rot,ANG[x])-rot)-Math.abs(near(rot,ANG[y])-rot))[0];pick(k)};
-  const say=()=>{try{const T=JSON.parse(localStorage.getItem('tasks-1')||'null'),S=JSON.parse(localStorage.getItem('rules-1')||'null');$('#taskSay').textContent=T?`吊着 ${T.filter(t=>t.st==='run').length} 件 · 等着 ${T.filter(t=>t.st==='wait').length} 件`:'去码头看看';const off=S?S.sv.filter(x=>x.st!=='ok'):[];$('#ruleSay').textContent=S?(off.length?off.map(x=>x.name).join('、')+'的灯不对':'灯都亮着'):'去看一眼'}catch(e){}};
+  const say=()=>{try{const T=JSON.parse(localStorage.getItem('tasks-2')||'null'),S=JSON.parse(localStorage.getItem('rules-1')||'null');$('#taskSay').textContent=T?`等你 ${T.filter(t=>t.st==='need').length} 件 · 在做 ${T.filter(t=>t.st==='run').length} 件`:'乖乖和宝宝的活';const off=S?S.sv.filter(x=>x.st!=='ok'):[];$('#ruleSay').textContent=S?(off.length?off.map(x=>x.name).join('、')+'的灯不对':'灯都亮着'):'去看一眼'}catch(e){}};
   $('#taskGo').onclick=()=>openNook('tasks',30);$('#ruleGo').onclick=()=>openNook('rules',70);
   new MutationObserver(()=>{if($('#setp').classList.contains('on')){say();paint(false)}}).observe($('#setp'),{attributes:true,attributeFilter:['class']});new MutationObserver(say).observe($('#nook'),{attributes:true,attributeFilter:['class']});
   $('#skA').src=IMG[real()];$('#skA').dataset.k=real();$('#skA').style.opacity=1;paint(false);setInterval(()=>{if(!cur&&$('#setp').classList.contains('on'))paint()},30000)})();
@@ -728,5 +743,8 @@ requestAnimationFrame(()=>{const i=Math.max(0,WINS.findIndex(w=>w.unread)),[x,wd
 let turn=0;$('#sky').onclick=()=>{turn+=180;$('#sky i').style.transform=`rotate(${turn}deg)`;document.body.dataset.sky=document.body.dataset.sky==='night'?'dusk':'night'};
 
 </script>
-<script src="../fx.js"></script><script>Fx.hang('.note',{max:16,k:40,c:1.6});Fx.hang('.ticket',{max:12})</script></body>
+<script src="../fx.js"></script><script>Fx.hang('.note',{max:16,k:40,c:1.6});Fx.hang('.ticket',{max:12})</script><script>/* 左右滑到边上时，名牌别被屏幕边切一半：整块往里收（只挪显示位置，不动画里的点击区） */
+(()=>{const pan=document.querySelector('#pan');if(!pan)return;let raf=0;
+const fix=()=>{raf=0;const pr=pan.getBoundingClientRect();document.querySelectorAll('#stage .tag').forEach(t=>{t.style.translate='';t.style.opacity='';const r=t.getBoundingClientRect();if(!r.width)return;const vis=Math.min(r.right,pr.right)-Math.max(r.left,pr.left);if(vis<=0)return;if(vis<r.width*.35){t.style.opacity='0';return}let dx=0;if(r.left<pr.left+6)dx=pr.left+6-r.left;else if(r.right>pr.right-6)dx=pr.right-6-r.right;if(dx)t.style.translate=dx+'px 0'})};
+const go=()=>{if(!raf)raf=requestAnimationFrame(fix)};pan.addEventListener('scroll',go,{passive:true});addEventListener('resize',go);const stg=document.querySelector('#stage');if(stg)stg.addEventListener('transitionend',go);setTimeout(fix,400);setTimeout(fix,1500)})();</script></body>
 </html>

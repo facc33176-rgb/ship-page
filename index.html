@@ -111,6 +111,10 @@ body.under .scene *,body.under nav *{animation-play-state:paused!important}
 
 /* 动效减法：常驻循环每屏最多三样，挂着的东西改成手碰到、滑动带到才晃（fx.js） */
 .sign:not(.new){animation:none;transform:translate(-50%,-50%)}nav button:not(.on){animation:none}
+
+/* 天色钮缩短，别压住 HARBOR 前的小锚；偷看时描一圈暖色 */
+.tod.peek{box-shadow:0 0 0 1.5px #c9972e,0 1px 4px rgba(40,30,10,.25)}
+@media(max-width:360px){.head h1{font-size:21px;letter-spacing:.14em}.head h1::before{font-size:15px;margin-right:5px}}
 </style>
 </head>
 <body>
@@ -143,7 +147,7 @@ fit();addEventListener('resize',fit);
 /* 小镇跟着真实时间走：5～8 清晨，8～17 白天，17～19:30 黄昏，其余夜里。左上角可以先偷看别的时间 */
 let peek=null;const ORDER=['dawn','day','dusk','night'];
 function real(){const d=new Date(),h=d.getHours()+d.getMinutes()/60;return h>=5&&h<8?'dawn':h<17&&h>=8?'day':h>=17&&h<19.5?'dusk':'night'}
-function setTime(){const t=peek||real();document.body.dataset.t=t;document.querySelectorAll('.pic>img.bg').forEach(i=>{const on=i.dataset.t===t;if(on&&!i.getAttribute('src'))i.src=i.dataset.src;i.classList.toggle('on',on)});pic.dataset.sky=t;scene.style.background=`linear-gradient(${SKY[t][0]},${SKY[t][1]})`;$('#tod').textContent=(peek?'偷看 · ':'现在 · ')+SKY[t][2]+' ⇄';$('nav').style.setProperty('--np',t==='night'?'#4a3a4c':'')}
+function setTime(){const t=peek||real();document.body.dataset.t=t;document.querySelectorAll('.pic>img.bg').forEach(i=>{const on=i.dataset.t===t;if(on&&!i.getAttribute('src'))i.src=i.dataset.src;i.classList.toggle('on',on)});pic.dataset.sky=t;scene.style.background=`linear-gradient(${SKY[t][0]},${SKY[t][1]})`;$('#tod').textContent=SKY[t][2]+' ⇄';$('#tod').classList.toggle('peek',!!peek);$('#tod').title=peek?'正在偷看，点着点着会回到现在':'现在是'+SKY[t][2]+'，点一下偷看别的时段';$('nav').style.setProperty('--np',t==='night'?'#4a3a4c':'')}
 window.setPeek=k=>{peek=(k&&k!==real())?k:null;setTime()};
 $('#tod').onclick=()=>{const cur=peek||real(),nx=ORDER[(ORDER.indexOf(cur)+1)%4];peek=nx===real()?null:nx;setTime()};setTime();setInterval(setTime,60000);
 
@@ -169,5 +173,5 @@ function paintBadges(){Object.entries(SIGN).forEach(([k,g])=>{const n=BADGE[k]||
 STREETS.forEach(([n,k,p],i)=>{const b=document.createElement('button');b.dataset.p=p;b.innerHTML=`<i><img src="img/n_${k}.webp" alt=""><b>${n}</b></i>`;b.style.setProperty('--hs',(3.4+i*.4)+'s');b.style.setProperty('--hd',(-i*.9)+'s');b.onclick=()=>{b.classList.remove('sw');void b.offsetWidth;b.classList.add('sw');setTimeout(()=>GO[p]&&GO[p](b),220)};$('#nav').appendChild(b)});paintBadges();
 const d=new Date();$('#dM').textContent=(d.getMonth()+1)+'月';$('#dD').textContent=d.getDate();$('#dW').textContent='周'+'日一二三四五六'[d.getDay()];$('#cD').textContent=d.getDate();$('#cW').textContent=(d.getMonth()+1)+'月';
 </script>
-<script>/* imgRetry：图没下来就再要两次，免得夜里那张空着 */document.querySelectorAll('img').forEach(i=>{let n=0;const again=()=>{if(n++<2)setTimeout(()=>{const u=i.getAttribute('src').split('?')[0];i.src=u+'?r='+n},600*n)};i.addEventListener('error',again);if(i.complete&&!i.naturalWidth&&i.getAttribute('src'))again()});</script><script src="fx.js"></script><script>Fx.hang('nav button',{max:14,k:46});Fx.hang('.pic .sign',{max:12,pass:false});Fx.water(document.querySelector('#pic'),[[0,16,100,20],[70,30,100,40],[92,40,100,57],[87,57,100,68],[93,68,100,86]]);</script></body>
+<script>/* imgRetry：图没下来就再要两次，免得夜里那张空着 */document.querySelectorAll('img').forEach(i=>{let n=0;const again=()=>{if(n++<2)setTimeout(()=>{const u=i.getAttribute('src').split('?')[0];i.src=u+'?r='+n},600*n)};i.addEventListener('error',again);if(i.complete&&!i.naturalWidth&&i.getAttribute('src'))again()});</script><script src="fx.js"></script><script src="home.js"></script><script src="notice.js"></script><script>Fx.hang('nav button',{max:14,k:46});Fx.hang('.pic .sign',{max:12,pass:false});Fx.water(document.querySelector('#pic'),[[0,16,100,20],[70,30,100,40],[92,40,100,57],[87,57,100,68],[93,68,100,86]]);</script></body>
 </html>

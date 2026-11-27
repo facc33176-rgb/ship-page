@@ -41,7 +41,7 @@
     water(box,zones){if(!box)return;const inSea=(x,y)=>zones.some(z=>x>=z[0]&&x<=z[2]&&y>=z[1]&&y<=z[3]);let lx=0,ly=0,down=false,n=0;
       const drop=(x,y,small)=>{if(n>14)return;n++;const d=document.createElement('i');d.className='ripple'+(small?' sm':'');d.style.left=x+'%';d.style.top=y+'%';box.appendChild(d);setTimeout(()=>{d.remove();n--},small?1300:2300)};
       const at=e=>{const r=box.getBoundingClientRect();return[(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100]};
-      let wet=0;box.addEventListener('pointerdown',e=>{wet=0;if(e.target.closest('.sign'))return;const[x,y]=at(e);if(!inSea(x,y))return;wet=1;down=true;lx=x;ly=y;drop(x,y)});
+      let wet=0;box.addEventListener('pointerdown',e=>{wet=0;if(e.target.closest('.sign,.bottle,.lit,[aria-label="灯塔阅读室"]'))return;const[x,y]=at(e);if(!inSea(x,y))return;wet=1;down=true;lx=x;ly=y;drop(x,y)});
       box.addEventListener('click',e=>{if(wet){wet=0;e.stopPropagation();e.preventDefault()}},true);/* 点在水上就只是水，不算点了旁边的房子 */
       box.addEventListener('pointermove',e=>{if(!down)return;const[x,y]=at(e);if(Math.hypot(x-lx,(y-ly)*2)<5)return;lx=x;ly=y;if(inSea(x,y))drop(x,y,true)});
       addEventListener('pointerup',()=>down=false);addEventListener('pointercancel',()=>down=false);
